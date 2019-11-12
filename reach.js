@@ -59,6 +59,8 @@ function getPassageSky(background) {
   return skyElement;
 }
 
+
+
 function createSoundElement(sound) {
   var outer = document.createElement("a-entity");
   if (sound.options.direction) {
@@ -92,7 +94,7 @@ function createPassageLink(link, linkIndex) {
       `0 ${(link.options.direction % 12) * -30.0} 0`
     );
   } else {
-    outer.setAttribute("rotation", `0 ${(linkIndex % 12) * -30.0} 0`);
+    outer.setAttribute("rotation", `0 ${((linkIndex+1) % 12) * -30.0} 0`);
   }
 
   var inner = document.createElement("a-entity");
@@ -107,7 +109,7 @@ function createPassageLink(link, linkIndex) {
   background.setAttribute("geometry", "primitive: plane;");
   background.setAttribute(
     "material",
-    "color:  #000000;  shader:  flat; opacity: 0.7"
+    "color:  #0000ff;  shader:  flat; opacity: 0.7"
   );
   var text = document.createElement("a-entity");
   text.setAttribute(
@@ -120,10 +122,45 @@ function createPassageLink(link, linkIndex) {
   inner.appendChild(text);
   return outer;
 }
+
+function createPassageText(text) {
+    var outer = document.createElement("a-entity");
+    if (text.options.direction) {
+      outer.setAttribute(
+        "rotation",
+        `0 ${(text.options.direction % 12) * -30.0} 0`
+      );
+    } else {
+      outer.setAttribute("rotation", `0 0 0`);
+    }
+
+    var inner = document.createElement("a-entity");
+    inner.setAttribute("position", "0 1.6 -2");
+    var background = document.createElement("a-entity");
+    
+    background.setAttribute("id", "background");
+    background.setAttribute("geometry", `primitive: plane; width:1.5; height:${1.5/8.5 * 11}`);
+    background.setAttribute(
+      "material",
+      "color:  #ffffff;  shader:  flat; opacity: 1.0"
+    );
+    var textEntity = document.createElement("a-entity");
+    textEntity.setAttribute(
+      "text",
+      `align: center; color: #000000; wrapCount: 18; width: 0.65; value: ${text.text};`
+    );
+    textEntity.setAttribute("position", "0 0 0.05");
+    outer.appendChild(inner);
+    inner.appendChild(background);
+    inner.appendChild(textEntity);
+    return outer;
+}
+
 function loadPassage(passage) {
   var scene = document.querySelector("#container");
   removeAllChildren(scene);
 
+  document.querySelector("a-scene").setAttribute("background", "color: black");
   var backgrounds = getBackgroundsInPassage(passage);
   for (var i = 0; i < backgrounds.length; i++) {
     var sky = getPassageSky(backgrounds[i]);
@@ -144,14 +181,24 @@ function loadPassage(passage) {
     scene.appendChild(soundElement);
   }
 
-  currentPassageName = passage.getAttribute("name");
+  if (backgrounds.length === 0) {
+	  var textBlock = getTextInPassage(passage);
+	  console.log(textBlock);
+	  var textElement = createPassageText(textBlock);
+	  scene.appendChild(textElement);
+  	  var defaultSky = getPassageSky({name:"#reach-default-360", options:{}});
+	  scene.appendChild(defaultSky);
+  }
+
+  currentPassageName = passage.getAttribute("name");  
 }
 function getPassageById(passageId) {
   //<tw-passagedata pid="1"
+	
   return storyDocument.querySelector(`tw-passagedata[pid='${passageId}']`);
 }
 function getPassageByName(name) {
-  var result = storyDocument.querySelector(`tw-passagedata[name='${name}']`);
+  var result = storyDocument.querySelector(`tw-passagedata[name='${name.replace("'", "\\'")}']`);
   if (result === null) {
     console.log(`Could not find passage with name: ${name}`);
   }
@@ -205,6 +252,12 @@ function getSoundsInPassage(passage) {
     sounds.push({ src: array1[3], options });
   }
   return sounds;
+}
+
+function getTextInPassage(passage) {
+	var rexp = /({\s*.+\s*})?(\[\[\s*.+\s*\]\]|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
+	var passageText = passage.textContent;
+	return {text: passageText.replace(rexp, ""), options:{}};
 }
 
 AFRAME.registerComponent("vr-passage-link", {
