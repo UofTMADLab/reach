@@ -97,7 +97,56 @@ function createSoundElement(sound) {
   return head;
 }
 
+function createFloorLink(link, linkIndex) {
+
+  var outer = document.createElement("a-entity");
+  var direction = 0;
+
+  if (link.options.direction !== undefined) {
+	  direction = (link.options.direction % 12) * -30.0;
+  }
+
+
+  outer.setAttribute("rotation", `0 ${direction} 0`);
+
+  var inner = document.createElement("a-entity");
+  
+  var distance = -2.0;
+  if (link.options.distance !== undefined) {
+	  distance = link.options.distance;
+  }
+  
+  inner.setAttribute("position", `0 0 ${distance}`);
+  inner.setAttribute("rotation", `-90 0 0`);
+  
+  var background = document.createElement("a-entity");
+  background.setAttribute("class", "clickable");
+  background.setAttribute("id", "background");
+  background.setAttribute(
+    "vr-passage-link",
+    `name: ${link.link}; event: click`
+  );
+  background.setAttribute("geometry", "primitive: circle;");
+  background.setAttribute(
+    "material",
+    "color:  #0000ff;  shader:  flat; opacity: 0.7"
+  );
+  var text = document.createElement("a-entity");
+  text.setAttribute(
+    "text",
+    `align: center; color: #FAFAFA; wrapCount: 18; width: 0.65; value: ${link.text};`
+  );
+  text.setAttribute("position", "0 0 0.05");
+
+  outer.appendChild(inner);
+  inner.appendChild(background);
+  inner.appendChild(text);
+  return outer;
+}
 function createPassageLink(link, linkIndex) {
+	if (link.options.floor === true) {
+		return createFloorLink(link, linkIndex);
+	}
 	var head = document.createElement("a-entity");
 	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
@@ -170,7 +219,7 @@ function createPassageText(text, textIndex) {
     background.setAttribute("geometry", `primitive: plane; width:1.5; height:${1.5/8.5 * 11}`);
     background.setAttribute(
       "material",
-      "color:  #ffffff;  shader:  flat; opacity: 1.0"
+      "color:  #ffffff;  shader:  flat; opacity: 0.7"
     );
     var textEntity = document.createElement("a-entity");
     textEntity.setAttribute(
