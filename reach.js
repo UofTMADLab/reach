@@ -1,3 +1,4 @@
+console.log("REACH-0.0.7");
 function removeAllChildren(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
@@ -49,12 +50,13 @@ function loadLocalStory() {
 
 function getPassageSky(background) {
   var skyElement = document.createElement("a-sky");
-  skyElement.setAttribute("src", background.name);
-  if (background.distance) {
-    skyElement.setAttribute("radius", background.distance);
+  skyElement.setAttribute("src", background.src);
+  if (background.options.distance !== undefined) {
+    skyElement.setAttribute("radius", background.options.distance);
     skyElement.setAttribute("transparent", "true");
   } else {
     skyElement.setAttribute("radius", 5000);
+	skyElement.setAttribute("transparent", "true");
   }
   return skyElement;
 }
@@ -62,43 +64,59 @@ function getPassageSky(background) {
 
 
 function createSoundElement(sound) {
+	var head = document.createElement("a-entity");
+	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
-  if (sound.options.direction) {
-    outer.setAttribute(
-      "rotation",
-      `0 ${(sound.options.direction % 12) * -30.0} 0`
-    );
-  } else {
-    outer.setAttribute("rotation", `0 0 0`);
+  var direction = 0;
+  var elevation = 0;
+  if (sound.options.direction !== undefined) {
+	  direction = (sound.options.direction % 12) * -30.0;
   }
-
+  if (sound.options.elevation !== undefined) {
+	  elevation = (sound.options.elevation % 12) * 30.0;
+  }
+  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
+    
+  var distance = 0;
+  if (sound.options.direction !== undefined) {
+	  distance = -2;
+  }
+  if (sound.options.distance !== undefined) {
+	  distance = sound.options.distance;
+  }
+  console.log("sound distance " + distance);
   var soundElement = document.createElement("a-sound");
   soundElement.setAttribute("src", sound.src);
-  if (sound.options.direction) {
-    soundElement.setAttribute("position", "0 1.6 -2");
-  } else {
-    soundElement.setAttribute("position", "0 1.6 0");
-  }
+  soundElement.setAttribute("position", `0 0 ${distance}`);
+
 
   soundElement.setAttribute("autoplay", "true");
   soundElement.setAttribute("loop", "true");
   outer.appendChild(soundElement);
-  return outer;
+  head.appendChild(outer);
+  return head;
 }
 
 function createPassageLink(link, linkIndex) {
+	var head = document.createElement("a-entity");
+	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
-  if (link.options.direction) {
-    outer.setAttribute(
-      "rotation",
-      `0 ${(link.options.direction % 12) * -30.0} 0`
-    );
-  } else {
-    outer.setAttribute("rotation", `0 ${((linkIndex+1) % 12) * -30.0} 0`);
+  var direction = ((linkIndex + 1) % 12) * -30.0;
+  var elevation = 0;
+  if (link.options.direction !== undefined) {
+	  direction = (link.options.direction % 12) * -30.0;
   }
+  if (link.options.elevation !== undefined) {
+	  elevation = (link.options.elevation % 12) * 30.0;
+  }
+  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
 
   var inner = document.createElement("a-entity");
-  inner.setAttribute("position", "0 1.6 -2");
+  var distance = -2.0;
+  if (link.options.distance !== undefined) {
+	  distance = link.options.distance;
+  }
+  inner.setAttribute("position", `0 0 ${distance}`);
   var background = document.createElement("a-entity");
   background.setAttribute("class", "clickable");
   background.setAttribute("id", "background");
@@ -117,25 +135,35 @@ function createPassageLink(link, linkIndex) {
     `align: center; color: #FAFAFA; wrapCount: 18; width: 0.65; value: ${link.text};`
   );
   text.setAttribute("position", "0 0 0.05");
+  head.appendChild(outer);
   outer.appendChild(inner);
   inner.appendChild(background);
   inner.appendChild(text);
-  return outer;
+  return head;
 }
 
-function createPassageText(text) {
-    var outer = document.createElement("a-entity");
-    if (text.options.direction) {
-      outer.setAttribute(
-        "rotation",
-        `0 ${(text.options.direction % 12) * -30.0} 0`
-      );
-    } else {
-      outer.setAttribute("rotation", `0 0 0`);
-    }
+function createPassageText(text, textIndex) {
+	var head = document.createElement("a-entity");
+	head.setAttribute("position", "0 1.6 0");
+  var outer = document.createElement("a-entity");
+  var direction = ((textIndex + 1) % 4) * 90.0;
+  var elevation = 0;
+  if (text.options.direction !== undefined) {
+	  direction = (text.options.direction % 4) * 90.0;
+  }
+  if (text.options.elevation !== undefined) {
+	  elevation = (text.options.elevation % 4) * 90.0;
+  }
+
+  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
 
     var inner = document.createElement("a-entity");
-    inner.setAttribute("position", "0 1.6 -2");
+    var distance = -2.0;
+    if (text.options.distance) {
+  	  distance = text.options.distance;
+    }
+    inner.setAttribute("position", `0 0 ${distance}`);
+	
     var background = document.createElement("a-entity");
     
     background.setAttribute("id", "background");
@@ -150,10 +178,11 @@ function createPassageText(text) {
       `align: center; color: #000000; wrapCount: 18; width: 0.65; value: ${text.text};`
     );
     textEntity.setAttribute("position", "0 0 0.05");
+	head.appendChild(outer);
     outer.appendChild(inner);
     inner.appendChild(background);
     inner.appendChild(textEntity);
-    return outer;
+    return head;
 }
 
 function loadPassage(passage) {
@@ -173,6 +202,13 @@ function loadPassage(passage) {
     var linkElement = createPassageLink(link, i);
     scene.appendChild(linkElement);
   }
+  
+  var panels = getPanelsInPassage(passage);
+  for (var i = 0; i < panels.length; i++) {
+	  var panel = panels[i];
+	  var panelElement = createPassageText(panel, i);
+	  scene.appendChild(panelElement);
+  }
 
   var sounds = getSoundsInPassage(passage);
   for (var i = 0; i < sounds.length; i++) {
@@ -182,11 +218,10 @@ function loadPassage(passage) {
   }
 
   if (backgrounds.length === 0) {
-	  var textBlock = getTextInPassage(passage);
-	  console.log(textBlock);
-	  var textElement = createPassageText(textBlock);
+	  var textBlock = getTextInPassage(passage);	  
+	  var textElement = createPassageText(textBlock, 0);
 	  scene.appendChild(textElement);
-  	  var defaultSky = getPassageSky({name:"#reach-default-360", options:{}});
+  	  var defaultSky = getPassageSky({src:"#reach-default-360", options:{}});
 	  scene.appendChild(defaultSky);
   }
 
@@ -226,16 +261,16 @@ function getLinksInPassage(passage) {
 
 function getBackgroundsInPassage(passage) {
   // var rexp = /\(\((.+)\)\)/g;
-  var rexp = /\(\((\s*(.+)\s*\|\s*distance:\s*(\d+)\s*\)\)|\s*(.+)\)\))/g;
+  var rexp = /({\s*(.+)\s*})?\(\(\s*(.+)\s*\)\)/g;
   var passageText = passage.textContent;
   var backgrounds = [];
   var array1;
   while ((array1 = rexp.exec(passageText)) !== null) {
-    if (array1[2] !== undefined && array1[3] !== undefined) {
-      backgrounds.push({ name: array1[2], distance: array1[3] });
-    } else {
-      backgrounds.push({ name: array1[4] });
-    }
+	  var options = {};
+	  if (array1[1]) {
+		  options = JSON.parse(array1[1]);
+	  }
+	  backgrounds.push({src:array1[3], options});
   }
   return backgrounds;
 }
@@ -255,9 +290,23 @@ function getSoundsInPassage(passage) {
 }
 
 function getTextInPassage(passage) {
-	var rexp = /({\s*.+\s*})?(\[\[\s*.+\s*\]\]|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
+	var rexp = /({\s*.+\s*})?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
 	var passageText = passage.textContent;
-	return {text: passageText.replace(rexp, ""), options:{}};
+	return {text: passageText.replace(rexp, ""), options:{direction: 0}};
+}
+
+function getPanelsInPassage(passage) {
+	var rexp = /({\s*(.+)\s*})?`([^`]+)`/g;
+	var passageText = passage.textContent;
+	var panels = [];
+    while ((array1 = rexp.exec(passageText)) !== null) {
+      var options = {};
+      if (array1[1]) {
+        options = JSON.parse(array1[1]);
+      }
+      panels.push({ text: array1[3], options });
+    }
+    return panels;	
 }
 
 AFRAME.registerComponent("vr-passage-link", {
