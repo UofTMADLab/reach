@@ -1,4 +1,4 @@
-console.log("REACH-0.0.7");
+console.log("REACH-0.0.7,10");
 function removeAllChildren(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
@@ -38,11 +38,36 @@ function loadStory(url, finished) {
   xhr.send();
 }
 
+function getSrc(resourceName) {
+	if (window.reach_resource_prefix === undefined) {
+		return resourceName;
+	} 
+	var normalizedName = resourceName.toLowerCase();
+	if (normalizedName.startsWith("http://") || normalizedName.startsWith("https://")) {
+		return resourceName;
+	}
+	return window.reach_resource_prefix.concat(resourceName);
+}
+
 function loadLocalStory() {
   storyDocument = document;
   startnode = storyDocument
     .querySelector("tw-storydata")
     .getAttribute("startnode");
+	
+	// run user scripts from story
+	var userScripts = storyDocument.querySelector("tw-storydata").querySelectorAll('*[type="text/twine-javascript"]');
+
+	for (i = 0; i < userScripts.length; i++) {
+		var script = userScripts[i].innerHTML;
+;
+		try {
+			eval(script);
+		} catch(error) {
+			console.log(error);
+		}
+		
+	}
   var passage = getPassageById(startnode);
 
   loadPassage(passage);
@@ -50,14 +75,25 @@ function loadLocalStory() {
 
 function getPassageSky(background) {
   var skyElement = document.createElement("a-sky");
-  skyElement.setAttribute("src", background.src);
-  if (background.options.distance !== undefined) {
-    skyElement.setAttribute("radius", background.options.distance);
-    skyElement.setAttribute("transparent", "true");
+
+  if (background.src === undefined) {
+	  skyElement.setAttribute("src", "#reach-default-360");
   } else {
-    skyElement.setAttribute("radius", 5000);
-	skyElement.setAttribute("transparent", "true");
+  	skyElement.setAttribute("src", getSrc(background.src));
   }
+  
+  var transparent = "true";
+  var radius = 5000;
+  if (background.options.transparent === false) {
+	  transparent = "false";
+  }
+  if (background.options.distance !== undefined) {
+	  radius = background.options.distance;
+  }
+  
+  skyElement.setAttribute("transparent", transparent);
+  skyElement.setAttribute("radius", radius);
+
   return skyElement;
 }
 
@@ -86,9 +122,8 @@ function createSoundElement(sound) {
   }
   console.log("sound distance " + distance);
   var soundElement = document.createElement("a-sound");
-  soundElement.setAttribute("src", sound.src);
+  soundElement.setAttribute("src", getSrc(sound.src));
   soundElement.setAttribute("position", `0 0 ${distance}`);
-
 
   soundElement.setAttribute("autoplay", "true");
   soundElement.setAttribute("loop", "true");
@@ -126,15 +161,31 @@ function createFloorLink(link, linkIndex) {
     "vr-passage-link",
     `name: ${link.link}; event: click`
   );
-  background.setAttribute("geometry", "primitive: circle;");
+	var backgroundColor = "#0000ff";
+	var backgroundOpacity = "0.7";
+	var backgroundShape = "circle";
+	if (link.options.backgroundColor !== undefined) {
+		backgroundColor = link.options.backgroundColor;
+	}
+	if (link.options.backgroundOpacity !== undefined) {
+		backgroundOpacity = link.options.backgroundOpacity;
+	}
+	if (link.options.shape !== undefined) {
+		backgroundShape = link.options.shape;
+	}
+  background.setAttribute("geometry", `primitive: ${backgroundShape};`);
   background.setAttribute(
     "material",
-    "color:  #0000ff;  shader:  flat; opacity: 0.7"
+    `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
   );
   var text = document.createElement("a-entity");
+	var textColor = "#FAFAFA";
+	if (link.options.color !== undefined) {
+		textColor = link.options.color;
+	}
   text.setAttribute(
     "text",
-    `align: center; color: #FAFAFA; wrapCount: 18; width: 0.65; value: ${link.text};`
+    `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
   );
   text.setAttribute("position", "0 0 0.05");
 
@@ -173,15 +224,31 @@ function createPassageLink(link, linkIndex) {
     "vr-passage-link",
     `name: ${link.link}; event: click`
   );
-  background.setAttribute("geometry", "primitive: plane;");
+	var backgroundColor = "#0000ff";
+	var backgroundOpacity = "0.7";
+	var backgroundShape = "plane";
+	if (link.options.backgroundColor !== undefined) {
+		backgroundColor = link.options.backgroundColor;
+	}
+	if (link.options.backgroundOpacity !== undefined) {
+		backgroundOpacity = link.options.backgroundOpacity;
+	}
+	if (link.options.shape !== undefined) {
+		backgroundShape = link.options.shape;
+	}
+  background.setAttribute("geometry", `primitive: ${backgroundShape};`);
   background.setAttribute(
     "material",
-    "color:  #0000ff;  shader:  flat; opacity: 0.7"
+    `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
   );
   var text = document.createElement("a-entity");
+	var textColor = "#FAFAFA";
+	if (link.options.color !== undefined) {
+		textColor = link.options.color;
+	}
   text.setAttribute(
     "text",
-    `align: center; color: #FAFAFA; wrapCount: 18; width: 0.65; value: ${link.text};`
+    `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
   );
   text.setAttribute("position", "0 0 0.05");
   head.appendChild(outer);
@@ -195,13 +262,13 @@ function createPassageText(text, textIndex) {
 	var head = document.createElement("a-entity");
 	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
-  var direction = ((textIndex + 1) % 4) * 90.0;
+  var direction = (((textIndex + 1) * 2.0) % 12) * 30.0;
   var elevation = 0;
   if (text.options.direction !== undefined) {
-	  direction = (text.options.direction % 4) * 90.0;
+	  direction = (text.options.direction % 12) * -30.0;
   }
   if (text.options.elevation !== undefined) {
-	  elevation = (text.options.elevation % 4) * 90.0;
+	  elevation = (text.options.elevation % 12) * 30.0;
   }
 
   outer.setAttribute("rotation", `${elevation} ${direction} 0`);
@@ -215,17 +282,37 @@ function createPassageText(text, textIndex) {
 	
     var background = document.createElement("a-entity");
     
+	var backgroundColor = "#ffffff";
+	var backgroundOpacity = "0.7";
+	var backgroundShape = "plane";
+	if (text.options.backgroundColor !== undefined) {
+		backgroundColor = text.options.backgroundColor;
+	}
+	if (text.options.backgroundOpacity !== undefined) {
+		backgroundOpacity = text.options.backgroundOpacity;
+	}
+	if (text.options.shape !== undefined) {
+		backgroundShape = text.options.shape;
+	}
+	
     background.setAttribute("id", "background");
-    background.setAttribute("geometry", `primitive: plane; width:1.5; height:${1.5/8.5 * 11}`);
+    background.setAttribute("geometry", `primitive: ${backgroundShape}; width:1.5; height:${1.5/8.5 * 11}`);
     background.setAttribute(
       "material",
-      "color:  #ffffff;  shader:  flat; opacity: 0.7"
+      `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
     );
     var textEntity = document.createElement("a-entity");
+	
+	var textColor = "#000000";
+	if (text.options.color !== undefined) {
+		textColor = text.options.color;
+	}
+	
     textEntity.setAttribute(
       "text",
-      `align: center; color: #000000; wrapCount: 18; width: 0.65; value: ${text.text};`
+      `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${text.text};`
     );
+	
     textEntity.setAttribute("position", "0 0 0.05");
 	head.appendChild(outer);
     outer.appendChild(inner);
@@ -270,7 +357,7 @@ function loadPassage(passage) {
 	  var textBlock = getTextInPassage(passage);	  
 	  var textElement = createPassageText(textBlock, 0);
 	  scene.appendChild(textElement);
-  	  var defaultSky = getPassageSky({src:"#reach-default-360", options:{}});
+  	  var defaultSky = getPassageSky({options:{"transparent":false}});
 	  scene.appendChild(defaultSky);
   }
 
@@ -433,3 +520,28 @@ AFRAME.registerComponent("vr-link", {
   }
 });
 
+AFRAME.registerComponent("reach-load-local", {
+	init: function() {
+	    storyDocument = document;
+	    startnode = storyDocument
+	      .querySelector("tw-storydata")
+	      .getAttribute("startnode");
+	
+	  	// run user scripts from story
+	  	var userScripts = storyDocument.querySelector("tw-storydata").querySelectorAll('*[type="text/twine-javascript"]');
+
+	  	for (i = 0; i < userScripts.length; i++) {
+	  		var script = userScripts[i].innerHTML;
+	  ;
+	  		try {
+	  			eval(script);
+	  		} catch(error) {
+	  			console.log(error);
+	  		}
+		
+	  	}
+	    var passage = getPassageById(startnode);
+
+	    loadPassage(passage);
+	}
+});
