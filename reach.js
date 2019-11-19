@@ -1,4 +1,4 @@
-console.log("REACH-0.0.9,12");
+console.log("REACH-0.0.9,13");
 function getDirectionBetweenPassages(a,b) {
 	var nb = {x: b.x - a.x, y: b.y - a.y};
 	var theta = 0;
@@ -378,13 +378,13 @@ function loadPassage(passage) {
     scene.appendChild(soundElement);
   }
 
-  if (backgrounds.length === 0) {
-	  var textBlock = getTextInPassage(passage);	  
-	  var textElement = createPassageText(textBlock, 0);
-	  scene.appendChild(textElement);
-  	  var defaultSky = getPassageSky({options:{"transparent":false}});
-	  scene.appendChild(defaultSky);
-  }
+  // if (backgrounds.length === 0) {
+  // 	  var textBlock = getTextInPassage(passage);
+  // 	  var textElement = createPassageText(textBlock, 0);
+  // 	  scene.appendChild(textElement);
+  // 	  var defaultSky = getPassageSky({options:{"transparent":false}});
+  // 	  scene.appendChild(defaultSky);
+  // }
 
   currentPassageName = passage.getAttribute("name");  
   currentPassageTwinePosition = getPassageTwinePosition(passage);
