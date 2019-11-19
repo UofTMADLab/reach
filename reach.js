@@ -378,13 +378,13 @@ function loadPassage(passage) {
     scene.appendChild(soundElement);
   }
 
-  // if (backgrounds.length === 0) {
-  // 	  var textBlock = getTextInPassage(passage);
-  // 	  var textElement = createPassageText(textBlock, 0);
-  // 	  scene.appendChild(textElement);
-  // 	  var defaultSky = getPassageSky({options:{"transparent":false}});
-  // 	  scene.appendChild(defaultSky);
-  // }
+  if (backgrounds.length === 0) {
+  	  // var textBlock = getTextInPassage(passage);
+  	  // var textElement = createPassageText(textBlock, 0);
+  	  // scene.appendChild(textElement);
+  	  var defaultSky = getPassageSky({options:{"transparent":false}});
+  	  scene.appendChild(defaultSky);
+  }
 
   currentPassageName = passage.getAttribute("name");  
   currentPassageTwinePosition = getPassageTwinePosition(passage);
