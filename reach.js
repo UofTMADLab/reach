@@ -1,4 +1,19 @@
-console.log("REACH-0.0.7,10");
+console.log("REACH-0.0.9,12");
+function getDirectionBetweenPassages(a,b) {
+	var nb = {x: b.x - a.x, y: b.y - a.y};
+	var theta = 0;
+	if (nb.x === 0) {
+		if (nb.y >= 0){
+			return 180.0
+		} else {
+			return 0.0;
+		}
+	} else if (nb.x > 0) {
+		return -(Math.atan(nb.y / nb.x) * (180 / Math.PI) - 90) + 180;
+	} else {
+		return -(Math.atan(nb.y / nb.x) * (180 / Math.PI) - 90);
+	}
+}
 function removeAllChildren(element) {
   while (element.firstChild) {
     element.removeChild(element.firstChild);
@@ -21,6 +36,8 @@ function loadScene(url) {
 var storyDocument;
 var startnode;
 var currentPassageName;
+var currentPassageTwinePosition;
+
 function loadStory(url, finished) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function() {
@@ -203,6 +220,10 @@ function createPassageLink(link, linkIndex) {
   var outer = document.createElement("a-entity");
   var direction = ((linkIndex + 1) % 12) * -30.0;
   var elevation = 0;
+  
+  if (link.twinePosition !== undefined) {
+	  direction = getDirectionBetweenPassages(currentPassageTwinePosition, link.twinePosition);
+  }
   if (link.options.direction !== undefined) {
 	  direction = (link.options.direction % 12) * -30.0;
   }
@@ -264,6 +285,9 @@ function createPassageText(text, textIndex) {
   var outer = document.createElement("a-entity");
   var direction = (((textIndex + 1) * 2.0) % 12) * 30.0;
   var elevation = 0;
+  if (text.twinePosition !== undefined) {
+	  direction = getDirectionBetweenPassages(currentPassageTwinePosition, text.twinePosition);
+  }
   if (text.options.direction !== undefined) {
 	  direction = (text.options.direction % 12) * -30.0;
   }
@@ -324,7 +348,8 @@ function createPassageText(text, textIndex) {
 function loadPassage(passage) {
   var scene = document.querySelector("#container");
   removeAllChildren(scene);
-
+  currentPassageTwinePosition = getPassageTwinePosition(passage);
+  
   document.querySelector("a-scene").setAttribute("background", "color: black");
   var backgrounds = getBackgroundsInPassage(passage);
   for (var i = 0; i < backgrounds.length; i++) {
@@ -362,6 +387,7 @@ function loadPassage(passage) {
   }
 
   currentPassageName = passage.getAttribute("name");  
+  currentPassageTwinePosition = getPassageTwinePosition(passage);
 }
 function getPassageById(passageId) {
   //<tw-passagedata pid="1"
@@ -376,20 +402,39 @@ function getPassageByName(name) {
   return result;
 }
 
+function getPassageTwinePosition(passage) {
+	if (passage === undefined){
+		console.log(`could not find position of passage with name: ${name}`)
+		return {x:0, y:0};
+	}
+	var coordString = passage.getAttribute("position");
+	if (coordString === undefined) {
+		return {x:0, y:0};
+	}
+	var coordA = coordString.split(",");
+	console.log(coordA);
+	return {x:coordA[0], y:coordA[1]};
+}
+
 function getLinksInPassage(passage) {
-  var rexp = /({\s*(.+)\s*})?\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+	// match beginning of text, or options JSON, or any character other than `, then [[text]] or [[text|link]], with optional spaces between
+	// brackets and json/text
+  var rexp = /(^|({\s*(.+)\s*})|[^`])\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
   var passageText = passage.textContent;
   var links = [];
   var array1;
   while ((array1 = rexp.exec(passageText)) !== null) {
     var options = {};
-    if (array1[1]) {
+    if (array1[2]) {
       options = JSON.parse(array1[1]);
     }
-    if (array1[4]) {
-      links.push({ text: array1[4], link: array1[5], options: options });
+    if (array1[5]) {
+		var newPassage = getPassageByName(array1[6]);
+		
+      links.push({ text: array1[5], link: array1[6], options: options, twinePosition: getPassageTwinePosition(newPassage) });
     } else {
-      links.push({ text: array1[6], link: array1[6], options: options });
+		var newPassage = getPassageByName(array1[7]);
+      links.push({ text: array1[7], link: array1[7], options: options, twinePosition: getPassageTwinePosition(newPassage)  });
     }
   }
   return links;
@@ -426,23 +471,43 @@ function getSoundsInPassage(passage) {
 }
 
 function getTextInPassage(passage) {
-	var rexp = /({\s*.+\s*})?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
+	var rexp = /({\s*.+\s*})?`?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
 	var passageText = passage.textContent;
 	return {text: passageText.replace(rexp, ""), options:{direction: 0}};
 }
 
 function getPanelsInPassage(passage) {
-	var rexp = /({\s*(.+)\s*})?`([^`]+)`/g;
-	var passageText = passage.textContent;
-	var panels = [];
+	// var rexp = /({\s*(.+)\s*})?`([^`]+)`/g;
+	//
+	// var passageText = passage.textContent;
+	// var panels = [];
+	//     while ((array1 = rexp.exec(passageText)) !== null) {
+	//       var options = {};
+	//       if (array1[1]) {
+	//         options = JSON.parse(array1[1]);
+	//       }
+	//       panels.push({ text: array1[3], options });
+	//     }
+	//     return panels;
+    var rexp = /({\s*(.+)\s*})?`\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+    var passageText = passage.textContent;
+    var links = [];
+    var array1;
     while ((array1 = rexp.exec(passageText)) !== null) {
       var options = {};
       if (array1[1]) {
         options = JSON.parse(array1[1]);
       }
-      panels.push({ text: array1[3], options });
+      if (array1[4]) {
+  		var newPassage = getPassageByName(array1[5]);
+		
+        links.push({ text: newPassage.textContent,  options: options, twinePosition: getPassageTwinePosition(newPassage) });
+      } else {
+  		var newPassage = getPassageByName(array1[6]);
+        links.push({ text: newPassage.textContent,  options: options, twinePosition: getPassageTwinePosition(newPassage) });
+      }
     }
-    return panels;	
+    return links;
 }
 
 AFRAME.registerComponent("vr-passage-link", {
