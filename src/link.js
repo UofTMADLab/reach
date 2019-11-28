@@ -101,7 +101,6 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	  backgroundHeight = size.height;
 	  
   }
-  console.log(direction, inclination);
   outer.setAttribute("rotation", `${inclination} ${direction} 0`);
 
   var inner = document.createElement("a-entity");
@@ -157,6 +156,9 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
   var outer = document.createElement("a-entity");
   var direction = (((textIndex + 1) * 2.0) % 12) * 30.0;
   var inclination = 0;
+  var distance = -2.0;
+	var backgroundWidth = "1.5";
+	var backgroundHeight = `${backgroundWidth/8.5 * 11}`;
   if (text.twinePosition !== undefined) {
 	  direction = getDirectionBetweenPassages(currentPassageTwinePosition, text.twinePosition);
   }
@@ -166,14 +168,30 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
   if (text.options.inclination !== undefined) {
 	  inclination = (text.options.inclination % 12) * 30.0;
   }
+  if (text.options.distance) {
+	  distance = -1.0 * text.options.distance;
+  }
+	if (text.options.width !== undefined) {
+		backgroundWidth = text.options.width;
+	}
+	if (text.options.height !== undefined) {
+		backgroundHeight = text.options.height;
+	}
+    if (text.options.corners !== undefined ) {
+  	  var corners = parseCornerString(text.options.corners);
+  	  var size = panelSizeFromCorners(distance * -1.0, corners.corner1, corners.corner2);
+  	  direction = (avg(corners.corner1.direction, corners.corner2.direction) % 12) * -30.0;	  
+  	  inclination = (avg(corners.corner1.inclination, corners.corner2.inclination) % 12) * 30.0;
+  	  backgroundWidth = size.width;
+  	  backgroundHeight = size.height;
+	  
+    }
 
   outer.setAttribute("rotation", `${inclination} ${direction} 0`);
 
     var inner = document.createElement("a-entity");
-    var distance = -2.0;
-    if (text.options.distance) {
-  	  distance = -1.0 * text.options.distance;
-    }
+    
+
     inner.setAttribute("position", `0 0 ${distance}`);
 	
     var background = document.createElement("a-entity");
@@ -181,8 +199,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	var backgroundColor = "#ffffff";
 	var backgroundOpacity = "0.7";
 	var backgroundShape = "plane";
-	var backgroundWidth = "1.5";
-	var backgroundHeight = `${backgroundWidth/8.5 * 11}`;
+
 	
 	if (text.options.backgroundColor !== undefined) {
 		backgroundColor = text.options.backgroundColor;
@@ -193,12 +210,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	if (text.options.shape !== undefined) {
 		backgroundShape = text.options.shape;
 	}
-	if (text.options.width !== undefined) {
-		backgroundWidth = text.options.width;
-	}
-	if (text.options.height !== undefined) {
-		backgroundHeight = text.options.height;
-	}
+
 	
     background.setAttribute("id", "background");
     background.setAttribute("geometry", `primitive: ${backgroundShape}; width:${backgroundWidth}; height:${backgroundHeight}`);
