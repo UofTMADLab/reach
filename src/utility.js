@@ -31,4 +31,34 @@ function getSrc(resourceName) {
 	return window.reach_resource_prefix.concat(resourceName);
 }
 
-export {getDirectionBetweenPassages, removeAllChildren, getSrc};
+function sphericalToCartesian(r, theta, phi) {
+	return {x: r * Math.sin(theta) * Math.cos(phi), y: r * Math.sin(theta) * Math.sin(phi), z: r * Math.cos(theta)};
+}
+
+function chordLength(r, dtheta) {
+	return r * 2 * Math.sin(dtheta / 2.0);
+}
+
+function panelSizeFromCorners(distance, corner1, corner2) {
+	var dAzimuth = reachDirectionToRadians(corner2.direction) - reachDirectionToRadians(corner1.direction);
+	var dInclination = reachInclinationToRadians(corner2.inclination) - reachInclinationToRadians(corner1.inclination);
+	return {width: chordLength(distance, dAzimuth), height:chordLength(distance, dInclination)};
+}
+
+function avg(a, b) {
+	return (a + b) / 2.0;
+}
+
+function parseCornerString(str) {
+	var splitString = str.split(" ");
+	return {corner1: {direction: parseFloat(splitString[0]), inclination: parseFloat(splitString[1])}, corner2: {direction: parseFloat(splitString[2]), inclination: parseFloat(splitString[3])}};
+}
+function reachDirectionToRadians(direction) {
+	return (direction % 12) / -12.0 * 2.0 * Math.PI;
+}
+
+function reachInclinationToRadians(inclination) {
+	return (inclination % 12) / 12.0 * 2.0 * Math.PI;
+}
+
+export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString};

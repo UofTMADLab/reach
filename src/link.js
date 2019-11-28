@@ -1,4 +1,4 @@
-import {getDirectionBetweenPassages} from './utility.js';
+import {getDirectionBetweenPassages, panelSizeFromCorners, avg, parseCornerString} from './utility.js';
 
 function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
 
@@ -70,24 +70,43 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
   var direction = ((linkIndex + 1) % 12) * -30.0;
-  var elevation = 0;
-  
+  var inclination = 0;
+  var distance = -2.0;
+	var backgroundWidth = "1.0";
+	var backgroundHeight = "1.0";
   if (link.twinePosition !== undefined) {
 	  direction = getDirectionBetweenPassages(currentPassageTwinePosition, link.twinePosition);
   }
   if (link.options.direction !== undefined) {
 	  direction = (link.options.direction % 12) * -30.0;
   }
-  if (link.options.elevation !== undefined) {
-	  elevation = (link.options.elevation % 12) * 30.0;
+  if (link.options.inclination !== undefined) {
+	  inclination = (link.options.inclination % 12) * 30.0;
   }
-  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
-
-  var inner = document.createElement("a-entity");
-  var distance = -2.0;
   if (link.options.distance !== undefined) {
 	  distance = -1.0 * link.options.distance;
   }
+	if (link.options.width !== undefined) {
+		backgroundWidth = link.options.width;
+	}
+	if (link.options.height !== undefined) {
+		backgroundHeight = link.options.height;
+	}
+  if (link.options.corners !== undefined ) {
+	  var corners = parseCornerString(link.options.corners);
+	  var size = panelSizeFromCorners(distance * -1.0, corners.corner1, corners.corner2);
+	  direction = (avg(corners.corner1.direction, corners.corner2.direction) % 12) * -30.0;	  
+	  inclination = (avg(corners.corner1.inclination, corners.corner2.inclination) % 12) * 30.0;
+	  backgroundWidth = size.width;
+	  backgroundHeight = size.height;
+	  
+  }
+  console.log(direction, inclination);
+  outer.setAttribute("rotation", `${inclination} ${direction} 0`);
+
+  var inner = document.createElement("a-entity");
+  
+
   inner.setAttribute("position", `0 0 ${distance}`);
   var background = document.createElement("a-entity");
   background.setAttribute("class", "clickable");
@@ -99,8 +118,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	var backgroundColor = "#0000ff";
 	var backgroundOpacity = "0.7";
 	var backgroundShape = "plane";
-	var backgroundWidth = "1.0";
-	var backgroundHeight = "1.0";
+
 	if (link.options.backgroundColor !== undefined) {
 		backgroundColor = link.options.backgroundColor;
 	}
@@ -110,12 +128,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	if (link.options.shape !== undefined) {
 		backgroundShape = link.options.shape;
 	}
-	if (link.options.width !== undefined) {
-		backgroundWidth = link.options.width;
-	}
-	if (link.options.height !== undefined) {
-		backgroundHeight = link.options.height;
-	}
+
   background.setAttribute("geometry", `primitive: ${backgroundShape}; width: ${backgroundWidth}; height: ${backgroundHeight};`);
   background.setAttribute(
     "material",
@@ -143,18 +156,18 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
   var direction = (((textIndex + 1) * 2.0) % 12) * 30.0;
-  var elevation = 0;
+  var inclination = 0;
   if (text.twinePosition !== undefined) {
 	  direction = getDirectionBetweenPassages(currentPassageTwinePosition, text.twinePosition);
   }
   if (text.options.direction !== undefined) {
 	  direction = (text.options.direction % 12) * -30.0;
   }
-  if (text.options.elevation !== undefined) {
-	  elevation = (text.options.elevation % 12) * 30.0;
+  if (text.options.inclination !== undefined) {
+	  inclination = (text.options.inclination % 12) * 30.0;
   }
 
-  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
+  outer.setAttribute("rotation", `${inclination} ${direction} 0`);
 
     var inner = document.createElement("a-entity");
     var distance = -2.0;

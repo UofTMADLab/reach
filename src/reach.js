@@ -234,11 +234,28 @@ AFRAME.registerComponent("vr-passage-link", {
   }
 });
 
+AFRAME.registerComponent('rotation-reader', {
+	init:function() {
+		this.hudtext = document.querySelector("#hudtext");
+	},
+  tick: function () {
+    // `this.el` is the element.
+    // `object3D` is the three.js object.
+
+    // `rotation` is a three.js Euler using radians. `quaternion` also available.
+	  this.hudtext.setAttribute("text", `value: dir:${((this.el.object3D.rotation.y / (2.0 * Math.PI) * -12.0) % 12).toFixed(2)} ele:${((this.el.object3D.rotation.x / (2.0 * Math.PI) * 12.0) % 12).toFixed(2)}`);
+
+    // `position` is a three.js Vector3.
+    // console.log(this.el.object3D.position);
+  }
+});
+
 AFRAME.registerComponent("reach-load-local", {
 	init: function() {
 	    storyDocument = document;
 		console.log("here");
 		document.querySelector("a-scene").setAttribute("cursor", "rayOrigin: mouse");
+		document.querySelector("a-scene").setAttribute("raycaster", "objects: .clickable");
 		
 		var cursor = storyDocument.querySelector('a-entity[cursor]');
 		cursor.setAttribute("raycaster", "objects: .clickable");
@@ -248,6 +265,8 @@ AFRAME.registerComponent("reach-load-local", {
 		cursor.setAttribute("material", "color: black; shader: flat");
 		cursor.setAttribute("position", "0 0 -1");
 		cursor.setAttribute("geometry", "primitive: ring; radiusInner: 0.01; radiusOuter: 0.02;");
+		
+		
 		// cursor.setAttribute("cursor", "fuse: true;");
 	    startnode = storyDocument
 	      .querySelector("tw-storydata")
@@ -280,6 +299,21 @@ AFRAME.registerComponent("reach-load-local", {
 	    var passage = getPassageById(startnode);
 		
 	    loadPassage(passage);
+		
+		if (window.reach_show_position === true) {
+			var hudtext = document.createElement("a-entity");
+			hudtext.setAttribute("position", "0 0 -1");
+			hudtext.setAttribute("text", "value: 0 0");
+			hudtext.setAttribute('id', "hudtext");
+			hudtext.setAttribute("geometry", `primitive: plane; width:auto; height:auto};`);
+			hudtext.setAttribute(
+			    "material",
+			    `color:  #000000;  shader:  flat; opacity: 0.3;`
+			  );
+			var camera = storyDocument.querySelector("a-camera");
+			camera.appendChild(hudtext);
+			camera.setAttribute("rotation-reader", "");
+		}
 	}
 });
 

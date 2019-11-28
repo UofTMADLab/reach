@@ -5,14 +5,14 @@ function createSoundElement(sound) {
 	head.setAttribute("position", "0 1.6 0");
   var outer = document.createElement("a-entity");
   var direction = 0;
-  var elevation = 0;
+  var inclination = 0;
   if (sound.options.direction !== undefined) {
 	  direction = (sound.options.direction % 12) * -30.0;
   }
-  if (sound.options.elevation !== undefined) {
-	  elevation = (sound.options.elevation % 12) * 30.0;
+  if (sound.options.inclination !== undefined) {
+	  inclination = (sound.options.inclination % 12) * 30.0;
   }
-  outer.setAttribute("rotation", `${elevation} ${direction} 0`);
+  outer.setAttribute("rotation", `${inclination} ${direction} 0`);
     
   var distance = 0;
   if (sound.options.direction !== undefined) {
