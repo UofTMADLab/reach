@@ -240,6 +240,15 @@ AFRAME.registerComponent("reach-load-local", {
 		console.log("here");
 		document.querySelector("a-scene").setAttribute("cursor", "rayOrigin: mouse");
 		
+		var cursor = storyDocument.querySelector('a-entity[cursor]');
+		cursor.setAttribute("raycaster", "objects: .clickable");
+		cursor.setAttribute("animation__click", "property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1");
+		cursor.setAttribute("animation__mouseenter", "property: scale; startEvents: mouseenter; easing: easeInCubic; dur: 100; from: 1 1 1; to: 1.2 1.2 1.2");
+		cursor.setAttribute("animation__mouseleave", "property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 100; to: 1 1 1");
+		cursor.setAttribute("material", "color: black; shader: flat");
+		cursor.setAttribute("position", "0 0 -1");
+		cursor.setAttribute("geometry", "primitive: ring; radiusInner: 0.01; radiusOuter: 0.02;");
+		// cursor.setAttribute("cursor", "fuse: true;");
 	    startnode = storyDocument
 	      .querySelector("tw-storydata")
 	      .getAttribute("startnode");
@@ -276,3 +285,4 @@ AFRAME.registerComponent("reach-load-local", {
 
 // causes our AFRAME component to initialize if this is loaded as a dev module (which may load in a different order than in the integrated production version)
 document.querySelector("a-scene").setAttribute("reach-load-local", true);
+

@@ -16,7 +16,7 @@ function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
   
   var distance = -2.0;
   if (link.options.distance !== undefined) {
-	  distance = link.options.distance;
+	  distance = -1.0 * link.options.distance;
   }
   
   inner.setAttribute("position", `0 0 ${distance}`);
@@ -86,7 +86,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
   var inner = document.createElement("a-entity");
   var distance = -2.0;
   if (link.options.distance !== undefined) {
-	  distance = link.options.distance;
+	  distance = -1.0 * link.options.distance;
   }
   inner.setAttribute("position", `0 0 ${distance}`);
   var background = document.createElement("a-entity");
@@ -151,7 +151,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
     var inner = document.createElement("a-entity");
     var distance = -2.0;
     if (text.options.distance) {
-  	  distance = text.options.distance;
+  	  distance = -1.0 * text.options.distance;
     }
     inner.setAttribute("position", `0 0 ${distance}`);
 	

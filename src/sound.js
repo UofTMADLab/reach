@@ -19,7 +19,7 @@ function createSoundElement(sound) {
 	  distance = -2;
   }
   if (sound.options.distance !== undefined) {
-	  distance = sound.options.distance;
+	  distance = -1.0 * sound.options.distance;
   }
   console.log("sound distance " + distance);
   var soundElement = document.createElement("a-sound");
