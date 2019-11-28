@@ -99,6 +99,8 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	var backgroundColor = "#0000ff";
 	var backgroundOpacity = "0.7";
 	var backgroundShape = "plane";
+	var backgroundWidth = "1.0";
+	var backgroundHeight = "1.0";
 	if (link.options.backgroundColor !== undefined) {
 		backgroundColor = link.options.backgroundColor;
 	}
@@ -108,25 +110,31 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	if (link.options.shape !== undefined) {
 		backgroundShape = link.options.shape;
 	}
-  background.setAttribute("geometry", `primitive: ${backgroundShape};`);
+	if (link.options.width !== undefined) {
+		backgroundWidth = link.options.width;
+	}
+	if (link.options.height !== undefined) {
+		backgroundHeight = link.options.height;
+	}
+  background.setAttribute("geometry", `primitive: ${backgroundShape}; width: ${backgroundWidth}; height: ${backgroundHeight};`);
   background.setAttribute(
     "material",
     `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
   );
-  var text = document.createElement("a-entity");
+
 	var textColor = "#FAFAFA";
 	if (link.options.color !== undefined) {
 		textColor = link.options.color;
 	}
-  text.setAttribute(
+  background.setAttribute(
     "text",
     `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
   );
-  text.setAttribute("position", "0 0 0.05");
+  // text.setAttribute("position", "0 0 0.05");
   head.appendChild(outer);
   outer.appendChild(inner);
   inner.appendChild(background);
-  inner.appendChild(text);
+  // inner.appendChild(text);
   return head;
 }
 
@@ -160,6 +168,9 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	var backgroundColor = "#ffffff";
 	var backgroundOpacity = "0.7";
 	var backgroundShape = "plane";
+	var backgroundWidth = "1.5";
+	var backgroundHeight = `${backgroundWidth/8.5 * 11}`;
+	
 	if (text.options.backgroundColor !== undefined) {
 		backgroundColor = text.options.backgroundColor;
 	}
@@ -169,9 +180,15 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	if (text.options.shape !== undefined) {
 		backgroundShape = text.options.shape;
 	}
+	if (text.options.width !== undefined) {
+		backgroundWidth = text.options.width;
+	}
+	if (text.options.height !== undefined) {
+		backgroundHeight = text.options.height;
+	}
 	
     background.setAttribute("id", "background");
-    background.setAttribute("geometry", `primitive: ${backgroundShape}; width:1.5; height:${1.5/8.5 * 11}`);
+    background.setAttribute("geometry", `primitive: ${backgroundShape}; width:${backgroundWidth}; height:${backgroundHeight}`);
 	if (text.backgrounds !== undefined && text.backgrounds[0] !== undefined) {
 	    background.setAttribute(
 	      "material",
@@ -184,23 +201,22 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	    );
 	}
 
-    var textEntity = document.createElement("a-entity");
-	
+
 	var textColor = "#000000";
 	if (text.options.color !== undefined) {
 		textColor = text.options.color;
 	}
 	
-    textEntity.setAttribute(
+    background.setAttribute(
       "text",
-      `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${text.text};`
+      `align: center; color: ${textColor}; width: 0.85; wrapCount: 18; value: ${text.text};`
     );
 	
-    textEntity.setAttribute("position", "0 0 0.05");
+    
 	head.appendChild(outer);
     outer.appendChild(inner);
     inner.appendChild(background);
-    inner.appendChild(textEntity);
+
     return head;
 }
 
