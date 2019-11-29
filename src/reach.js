@@ -291,9 +291,13 @@ AFRAME.registerComponent("reach-load-local", {
 				var idTag = i;
 				var src = getSrc(window.reach_preload_images[i]);
 				var img = document.createElement("img");
+				//note must set crossorigin first before src otherwise it will start downloading without the crossorigin header
+				img.setAttribute("crossorigin", "anonymous");
 				img.setAttribute("id", idTag);
 				img.setAttribute("src", src);
-				document.querySelector("a-assets").appendChild(img);
+				
+				storyDocument.querySelector("a-assets").appendChild(img);
+
 			}
 		}
 	    var passage = getPassageById(startnode);
