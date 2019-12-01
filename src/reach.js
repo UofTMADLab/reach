@@ -9,6 +9,7 @@ import './arrow.js';
 var storyDocument;
 var startnode;
 
+
 // var currentPassageTwinePosition;
 
 function loadPassage(passage) {
@@ -318,7 +319,7 @@ AFRAME.registerComponent("reach-load-local", {
 				console.log("Error: passage was not found: " + idOrName);
 				return;
 			}
-			return _.template(passage.textContent)();
+			return _.template(passage.textContent)({s: window.story.state});
 		}
 		window.story.show = function(idOrName, hideFromHistory) {
 			var passage = window.story.passage(idOrName);
@@ -439,23 +440,13 @@ AFRAME.registerComponent("reach-load-local", {
 		}
 		
 		window.story.start();
-		
-		if (window.reach_show_position === true) {
-			var hudtext = document.createElement("a-entity");
-			hudtext.setAttribute("position", "0 0 -1");
-			hudtext.setAttribute("text", "value: 0 0");
-			hudtext.setAttribute('id', "hudtext");
-			hudtext.setAttribute("geometry", `primitive: plane; width:auto; height:auto};`);
-			hudtext.setAttribute(
-			    "material",
-			    `color:  #000000;  shader:  flat; opacity: 0.3;`
-			  );
-			var camera = storyDocument.querySelector("a-camera");
-			camera.appendChild(hudtext);
-			camera.setAttribute("rotation-reader", "");
-		}
+
 	}
 });
 
 // causes our AFRAME component to initialize if this is loaded as a dev module (which may load in a different order than in the integrated production version)
-document.querySelector("a-scene").setAttribute("reach-load-local", true);
+var loadedScene = document.querySelector("a-scene");
+if (loadedScene != undefined) {
+	loadedScene.setAttribute("reach-load-local", true);
+}
+

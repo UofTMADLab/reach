@@ -38,14 +38,30 @@ function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
 	if (link.options.backgroundOpacity !== undefined) {
 		backgroundOpacity = link.options.backgroundOpacity;
 	}
-	if (link.options.shape !== undefined) {
+	if (link.options.shape !== undefined && link.options.shape !== "arrow") {
 		backgroundShape = link.options.shape;
 	}
-  background.setAttribute("geometry", `primitive: ${backgroundShape};`);
-  background.setAttribute(
-    "material",
-    `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
-  );
+	if (link.options.shape != "arrow") {
+	    background.setAttribute("geometry", `primitive: ${backgroundShape};`);
+	    background.setAttribute(
+	      "material",
+	      `color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
+	    );
+	}
+
+  
+	  if (link.options.shape === "arrow") {
+	  var arrow = document.createElement("a-entity");
+	  arrow.setAttribute("class", "clickable");
+	  arrow.setAttribute("vr-passage-link", `name: ${link.link}; event: click`);
+	  // arrow.setAttribute("rotation", "90 0 0");
+	  arrow.setAttribute("geometry", `primitive: arrow;`);
+	  arrow.setAttribute(
+	    	  "material",
+	    	  `color:  ${backgroundColor};  shader:  standard; opacity: ${backgroundOpacity};`
+	  	);
+	background.appendChild(arrow);
+	  }
   var text = document.createElement("a-entity");
 	var textColor = "#FAFAFA";
 	if (link.options.color !== undefined) {
@@ -124,7 +140,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	if (link.options.backgroundOpacity !== undefined) {
 		backgroundOpacity = link.options.backgroundOpacity;
 	}
-	if (link.options.shape !== undefined) {
+	if (link.options.shape !== undefined && link.options.shape !== "arrow") {
 		backgroundShape = link.options.shape;
 	}
 
@@ -142,6 +158,19 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
     "text",
     `align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
   );
+  if (link.options.shape === "arrow") {
+  	var arrow = document.createElement("a-entity");
+  	arrow.setAttribute("class", "clickable");
+  	arrow.setAttribute("vr-passage-link", `name: ${link.link}; event: click`);
+	arrow.setAttribute("position", "0 -1.6 0");
+	arrow.setAttribute("rotation", "-90 0 0");
+  	arrow.setAttribute("geometry", `primitive: arrow;`);
+  	arrow.setAttribute(
+    	  "material",
+    	  `color:  ${backgroundColor};  shader:  standard; opacity: ${backgroundOpacity};`
+  	);
+background.appendChild(arrow);
+  }
   // text.setAttribute("position", "0 0 0.05");
   head.appendChild(outer);
   outer.appendChild(inner);
