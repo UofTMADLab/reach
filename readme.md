@@ -40,7 +40,7 @@ From the reach folder:
 
 ### Including images and media in your reach story
 
-If your passages are referencing media, like images, sound or video, likely you will host those on an external server. The server needs to serve files with the 'CORS' header set. I have found that using the `assets` container in a basic https://glitch.com project works. And so does a website hosted by *github pages*.
+If your passages reference media, like images, sound or video, likely you will host those on an external server. The server needs to serve files with the 'CORS' header set. I have found that using the `assets` container in a basic https://glitch.com project works. And so does a website hosted by *github pages*.
 
 ### A very, very brief formatting guide for reach.
 
