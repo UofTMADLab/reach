@@ -62,6 +62,9 @@ function reachInclinationToRadians(inclination) {
 }
 
 function mergeMixins(mixins, local) {
+	if (!mixins) {
+		return local;
+	}
 	var mixinsSplit = mixins.split(' ');
 	var result = {};
 	for (var i in mixinsSplit) {

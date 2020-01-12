@@ -32,7 +32,7 @@ function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
 	background.setAttribute("class", "clickable");
 	background.setAttribute("id", "background");
 	background.setAttribute(
-		"vr-passage-link",
+		"reach_passage_link",
 		`name: ${link.link}; event: click`
 	);
 	var backgroundColor = "#0000ff";
@@ -59,7 +59,7 @@ function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
 	if (link.options.shape === "arrow") {
 		var arrow = document.createElement("a-entity");
 		arrow.setAttribute("class", "clickable");
-		arrow.setAttribute("vr-passage-link", `name: ${link.link}; event: click`);
+		arrow.setAttribute("reach_passage_link", `name: ${link.link}; event: click`);
 		// arrow.setAttribute("rotation", "90 0 0");
 		arrow.setAttribute("geometry", `primitive: arrow;`);
 		arrow.setAttribute(
@@ -86,110 +86,119 @@ function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
 }
 
 function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
+	
 	if (link.options.floor === true) {
 		return createFloorLink(link, linkIndex, currentPassageTwinePosition);
 	}
-	var head = document.createElement("a-entity");
-	head.setAttribute("position", "0 1.6 0");
-	var outer = document.createElement("a-entity");
-	var direction = ((linkIndex + 1) % 12) * -30.0;
-	var inclination = 0;
-	var distance = -2.0;
-	var backgroundWidth = "1.0";
-	var backgroundHeight = "1.0";
+	var direction = undefined;
+	var directionInDegrees = undefined;
 	if (link.twinePosition !== undefined) {
+		directionInDegrees = true;
 		direction = getDirectionBetweenPassages(currentPassageTwinePosition, link.twinePosition);
 	}
 	if (link.options.direction !== undefined) {
-		direction = (link.options.direction % 12) * -30.0;
+		directionInDegrees = false;
+		direction = link.options.direction;
 	}
-	if (link.options.inclination !== undefined) {
-		inclination = (link.options.inclination % 12) * 30.0;
-	}
-	if (link.options.distance !== undefined) {
-		distance = -1.0 * link.options.distance;
-	}
-	if (link.options.width !== undefined) {
-		backgroundWidth = link.options.width;
-	}
-	if (link.options.height !== undefined) {
-		backgroundHeight = link.options.height;
+
+	var distance = link.options.distance;
+	var inclination = link.options.inclination;
+	
+	var backgroundSize = undefined;
+	if (link.options.width && !link.options.height) {
+		backgroundSize = {
+			x: link.options.width,
+			y: link.options.width
+		};
+	} else if (!link.options.width && link.options.height) {
+		backgroundSize = {
+			x: link.options.height,
+			y: link.options.height
+		};
+	} else if (link.options.width && link.options.height) {
+		backgroundSize = {
+			x: link.options.width,
+			y: link.options.height
+		};
 	}
 	if (link.options.corners !== undefined) {
 		var corners = parseCornerString(link.options.corners);
-		var size = panelSizeFromCorners(distance * -1.0, corners.corner1, corners.corner2);
-		direction = (avg(corners.corner1.direction, corners.corner2.direction) % 12) * -30.0;
-		inclination = (avg(corners.corner1.inclination, corners.corner2.inclination) % 12) * 30.0;
-		backgroundWidth = size.width;
-		backgroundHeight = size.height;
-
+		var size = panelSizeFromCorners((distance ? distance : 2.0) * -1.0, corners.corner1, corners.corner2);
+		directionInDegrees = false;
+		direction = avg(corners.corner1.direction, corners.corner2.direction);
+		inclination = avg(corners.corner1.inclination, corners.corner2.inclination);
+		backgroundSize = {
+			x: size.width,
+			y: size.height
+		};
+		console.log(size);
 	}
-	outer.setAttribute("rotation", `${inclination} ${direction} 0`);
-
-	var inner = document.createElement("a-entity");
-
-
-	inner.setAttribute("position", `0 0 ${distance}`);
-	var background = document.createElement("a-entity");
-	background.setAttribute("class", "clickable");
-	background.setAttribute("id", "background");
-	background.setAttribute(
-		"vr-passage-link",
-		`name: ${link.link}; event: click`
-	);
-	var backgroundColor = "#0000ff";
-	var backgroundOpacity = "0.7";
-	var backgroundShape = "plane";
-
-	if (link.options.backgroundColor !== undefined) {
-		backgroundColor = link.options.backgroundColor;
+	
+	var backgroundSrc = undefined;
+	if (link.backgrounds && link.backgrounds[0]) {
+		backgroundSrc = link.backgrounds[0].src;
 	}
-	if (link.options.backgroundOpacity !== undefined) {
-		backgroundOpacity = link.options.backgroundOpacity;
-	}
-	if (link.options.shape !== undefined && link.options.shape !== "arrow") {
-		backgroundShape = link.options.shape;
-	}
+	
+	var el = document.createElement("a-entity");
 
-	background.setAttribute("geometry", `primitive: ${backgroundShape}; width: ${backgroundWidth}; height: ${backgroundHeight};`);
-	background.setAttribute(
-		"material",
-		`color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
-	);
+	var localOptions =  {
+		direction: direction,
+		directionInDegrees: directionInDegrees,
+		inclination: inclination,
+		distance: distance,
+		backgroundSize: backgroundSize,
+		backgroundColor: link.options.backgroundColor,
+		backgroundOpacity: link.options.backgroundOpacity,
+		backgroundShape: link.options.backgroundShape,
+		backgroundSrc: backgroundSrc,
+		color: link.options.color,
+		text: link.text,
+		link: link.link,
+		arrow: link.options.arrow
+	}
+	
+	var mergedOptions = mergeMixins(link.options.mixin, localOptions);
+	
+	if (!mergedOptions.direction) {
+		mergedOptions.direction = linkIndex + 1;
+		mergedOptions.directionInDegrees = false;
+	}
+	
+	if (!mergedOptions.directionInDegrees) {
+		mergedOptions.directionInDegrees = false;
+	}
+	
+	if (!mergedOptions.backgroundSize) {
+		mergedOptions.backgroundSize = {x: 1.0, y: 1.0};
+	}
+	
+	if (!mergedOptions.backgroundColor) {
+		mergedOptions.backgroundColor = "#0000AA";
+	}
+	
+	if (!mergedOptions.backgroundOpacity) {
+		mergedOptions.backgroundOpacity = 0.7;
+	}
+	
+	if (!mergedOptions.color) {
+		mergedOptions.color = "#FFFFFF";
+	}
+	
+	if (!mergedOptions.text) {
+		mergedOptions.text = mergedOptions.link;
+	}
+	el.setAttribute("reach_text_panel", mergedOptions);
+	
 
-	var textColor = "#FAFAFA";
-	if (link.options.color !== undefined) {
-		textColor = link.options.color;
-	}
-	background.setAttribute(
-		"text",
-		`align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
-	);
-	if (link.options.shape === "arrow") {
-		var arrow = document.createElement("a-entity");
-		arrow.setAttribute("class", "clickable");
-		arrow.setAttribute("vr-passage-link", `name: ${link.link}; event: click`);
-		arrow.setAttribute("position", "0 -1.6 0");
-		arrow.setAttribute("rotation", "-90 0 0");
-		arrow.setAttribute("geometry", `primitive: arrow;`);
-		arrow.setAttribute(
-			"material",
-			`color:  ${backgroundColor};  shader:  standard; opacity: ${backgroundOpacity};`
-		);
-		background.appendChild(arrow);
-	}
-	// text.setAttribute("position", "0 0 0.05");
-	head.appendChild(outer);
-	outer.appendChild(inner);
-	inner.appendChild(background);
-	// inner.appendChild(text);
-	return head;
+
+	return el;
+
 }
 
 function createPassageText(text, textIndex, currentPassageTwinePosition) {
 
-	var direction = (textIndex + 1) * 2.0;
-	var directionInDegrees = false;
+	var direction = undefined;
+	var directionInDegrees = undefined;
 	if (text.twinePosition !== undefined) {
 		directionInDegrees = true;
 		direction = getDirectionBetweenPassages(currentPassageTwinePosition, text.twinePosition);
@@ -198,6 +207,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 		directionInDegrees = false;
 		direction = text.options.direction;
 	}
+	var distance = text.options.distance;
 	var inclination = text.options.inclination;
 
 	var backgroundSize = undefined;
@@ -242,19 +252,29 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 		direction: direction,
 		directionInDegrees: directionInDegrees,
 		inclination: inclination,
-		distance: text.options.distance,
+		distance: distance,
 		backgroundSize: backgroundSize,
 		backgroundColor: text.options.backgroundColor,
 		backgroundOpacity: text.options.backgroundOpacity,
 		backgroundShape: text.options.backgroundShape,
 		backgroundSrc: backgroundSrc,
 		color: text.options.color,
-		text: text.text
+		text: text.text,
+		arrow: text.options.arrow
 	}
 	
-	var mergedOptions = mergeMixins(text.options.mixin ? text.options.mixin : "", localOptions);
+	var mergedOptions = mergeMixins(text.options.mixin, localOptions);
 	
-	el.setAttribute("reach-text-panel", mergedOptions);
+	if (mergedOptions.direction === undefined) {
+		mergedOptions.direction =  (textIndex + 1) * 2.0;
+		mergedOptions.directionInDegrees = false;
+	}
+	
+	if (mergedOptions.directionInDegrees === undefined) {
+		mergedOptions.directionInDegrees = false;
+	}
+	
+	el.setAttribute("reach_text_panel", mergedOptions);
 
 	return el;
 }

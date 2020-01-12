@@ -29,3 +29,93 @@ AFRAME.registerGeometry('arrow', {
     this.geometry = geometry;
   }
 });
+
+import {REACH_DEFAULT_NULL} from './utility.js';
+
+AFRAME.registerComponent("reach_arrow", {
+	
+	schema: {
+		
+		
+		direction: {type: "number", default: 0.0},
+		directionInDegrees: {type: "boolean", default: false},
+		inclination: {type: "number", default: 0.0},
+		distance: {type: "number", default: 2.0},
+		yHeight: {type: "number", default: 0.0},
+		opacity: {type: "number", default: 1.0},
+		color: {type: "color", default: "#000000"},
+		link: {type: "string", default: REACH_DEFAULT_NULL}
+		
+	},
+	init: function() {
+		
+	},
+	update: function(oldData) {
+		
+		if (this.head) {
+			this.el.removeChild(this.head);
+			this.head = undefined;
+			this.outer = undefined;
+			this.inner= undefined;
+			this.background = undefined;
+		}
+		
+		this.head = document.createElement("a-entity");
+		this.head.setAttribute("position", `0 ${this.data.yHeight} 0`);
+		this.outer = document.createElement("a-entity");		
+		this.outer.setAttribute("rotation", `${(this.data.inclination) % 12 * 30.0} ${this.data.directionInDegrees === true ? this.data.direction : (this.data.direction % 12) * -30.0} 0`);
+		this.inner = document.createElement("a-entity");
+		this.inner.setAttribute("position", `0 0 ${-1.0 * this.data.distance}`);
+		this.background = document.createElement("a-entity");
+		this.background.setAttribute("id", "arrow");
+		this.background.setAttribute("geometry", `primitive: arrow;`);
+		this.background.setAttribute("rotation", `-90 0 0`);
+		this.background.setAttribute("material", `color: ${this.data.color}; shader: flat; opacity: ${this.data.opacity}`);
+		
+		
+		if (this.data.link !== REACH_DEFAULT_NULL) {
+			this.background.setAttribute("class", "clickable");
+			this.background.setAttribute(
+				"reach_passage_link",
+				`name: ${this.data.link}; event: click`
+			);
+		}
+		this.head.appendChild(this.outer);
+		this.outer.appendChild(this.inner);
+		this.inner.appendChild(this.background);
+		
+		this.el.appendChild(this.head);
+	},
+	remove: function () {
+		if (this.head) {
+			this.el.removeChild(this.head);
+			this.head = undefined;
+			this.outer = undefined;
+			this.inner= undefined;
+			this.background = undefined;
+		}
+	},
+	
+	// tick: function(time, timeDelta) {
+	//
+	// },
+	// tock: function(time, timeDelta, camera) {
+	//
+	// },
+	
+	// pause: function() {
+	//
+	// },
+	// play: function() {
+	//
+	// },
+	// updateSchema: function(newData) {
+	//
+	// },
+	// events: {
+	// 	click: function(evt) {
+	// 		console.log(`This entity was clicked: ${this.el.getAttribute('id')}`);
+	// 	}
+	// }
+	
+})

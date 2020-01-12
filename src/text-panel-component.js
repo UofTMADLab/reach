@@ -1,6 +1,6 @@
 import {REACH_DEFAULT_NULL} from './utility.js';
 
-AFRAME.registerComponent("reach-text-panel", {
+AFRAME.registerComponent("reach_text_panel", {
 	
 	schema: {
 		
@@ -15,7 +15,9 @@ AFRAME.registerComponent("reach-text-panel", {
 		backgroundOpacity: {type: "number", default: 0.7},
 		backgroundShape: {type: "string", default: "plane"},
 		backgroundSrc: {type: "string", default: REACH_DEFAULT_NULL},
-		color: {type: "color", default: "#000000"}
+		color: {type: "color", default: "#000000"},
+		link: {type: "string", default: REACH_DEFAULT_NULL},
+		arrow: {type: "boolean", default: false}
 		
 	},
 	init: function() {
@@ -46,6 +48,27 @@ AFRAME.registerComponent("reach-text-panel", {
 			this.background.setAttribute("material", `color: ${this.data.backgroundColor}; shader: flat; opacity: ${this.data.backgroundOpacity}`);
 		}
 		this.background.setAttribute("text", `align: center; color: ${this.data.color}; width: 0.85; wrapCount: 18; value: ${this.data.text};`);
+		if (this.data.link !== REACH_DEFAULT_NULL) {
+			this.background.setAttribute("class", "clickable");
+			this.background.setAttribute(
+				"reach_passage_link",
+				`name: ${this.data.link}; event: click`
+			);
+		}
+		
+		if (this.data.arrow === true) {
+			console.log("arrow");
+			var arrow = document.createElement("a-entity");
+			arrow.setAttribute("reach_arrow", {
+				distance: 0.0,
+				yHeight: -1.6,
+				opacity: this.data.backgroundOpacity,
+				color: this.data.backgroundColor,
+				link: this.data.link
+			});
+			this.background.appendChild(arrow);
+		}
+		
 		this.head.appendChild(this.outer);
 		this.outer.appendChild(this.inner);
 		this.inner.appendChild(this.background);

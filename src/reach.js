@@ -200,7 +200,7 @@ function getPanelsInPassage(passage) {
     return links;
 }
 
-AFRAME.registerComponent("vr-passage-link", {
+AFRAME.registerComponent("reach_passage_link", {
   schema: {
     event: { type: "string", default: "" },
     name: { type: "string", default: "" }
@@ -237,7 +237,7 @@ AFRAME.registerComponent("vr-passage-link", {
   }
 });
 
-AFRAME.registerComponent('rotation-reader', {
+AFRAME.registerComponent('reach_rotation_reader', {
 	init:function() {
 		this.hudtext = document.querySelector("#hudtext");
 	},
@@ -397,12 +397,12 @@ AFRAME.registerComponent("reach-load-local", {
 					  
 					var camera = document.querySelector("a-camera");
 					camera.appendChild(hudtext);
-					camera.setAttribute("rotation-reader", "");
+					camera.setAttribute("reach_rotation_reader", "");
 				}
 			} else {
 				if (window.story.hud !== undefined) {
 					document.querySelector("a-camera").removeChild(window.story.hud);
-					document.querySelector("a-camera").removeAttribute("rotation-reader");
+					document.querySelector("a-camera").removeAttribute("reach_rotation_reader");
 					window.story.hud = undefined;
 				}
 			}
