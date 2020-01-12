@@ -27,6 +27,7 @@ AFRAME.registerComponent("reach_text_panel", {
 		
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.outer = undefined;
 			this.inner= undefined;
@@ -78,6 +79,7 @@ AFRAME.registerComponent("reach_text_panel", {
 	remove: function () {
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.outer = undefined;
 			this.inner= undefined;

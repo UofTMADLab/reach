@@ -1,4 +1,4 @@
-console.log("REACH-1.0.0,40");
+console.log("REACH-1.0.0,42");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -11,7 +11,7 @@ import './arrow.js';
 var storyDocument;
 var startnode;
 
-
+  
 
 AFRAME.registerComponent("reach_passage_link", {
   schema: {

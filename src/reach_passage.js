@@ -21,6 +21,7 @@ AFRAME.registerComponent("reach_passage", {
 		
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.passage = undefined;
 		}
@@ -99,6 +100,7 @@ AFRAME.registerComponent("reach_passage", {
 	remove: function () {
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.passage = undefined;
 		}

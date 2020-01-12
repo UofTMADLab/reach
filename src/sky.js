@@ -24,6 +24,13 @@ function getPassageSky(background, currentPassageName) {
   
   skyElement.setAttribute("transparent", transparent);
   skyElement.setAttribute("radius", radius);
+  skyElement.setAttribute("opacity", 0);
+  // skyElement.setAttribute("animation", "property: visible; to: true; startEvents: materialtextureloaded");
+  skyElement.setAttribute("animation", {
+  	  property: "opacity",
+  	  to: 1.0,
+  	  startEvents: "materialtextureloaded"
+  });
 
   return skyElement;
 }

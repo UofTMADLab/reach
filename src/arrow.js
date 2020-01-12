@@ -54,6 +54,7 @@ AFRAME.registerComponent("reach_arrow", {
 		
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.outer = undefined;
 			this.inner= undefined;
@@ -89,6 +90,7 @@ AFRAME.registerComponent("reach_arrow", {
 	remove: function () {
 		if (this.head) {
 			this.el.removeChild(this.head);
+			this.head.destroy();
 			this.head = undefined;
 			this.outer = undefined;
 			this.inner= undefined;
