@@ -1,6 +1,7 @@
-console.log("REACH-1.0.0,39"); 
+console.log("REACH-1.0.0,40");
 import './underscore-min.js';
-import './text-panel-component.js';
+import './reach_passage.js';
+import './reach_text_panel.js';
 import {getSrc, removeAllChildren} from './utility.js';
 import {getPassageSky} from './sky.js';
 import {createSoundElement} from './sound.js';
@@ -11,194 +12,6 @@ var storyDocument;
 var startnode;
 
 
-// var currentPassageTwinePosition;
-
-function loadPassage(passage) {
-	// videoElement.components.material.material.map.image.pause();
-
-	// videoElement.getAttribute("src").pause();
-
-    // currentPassageName = passage.getAttribute("name");
-    // currentPassageTwinePosition = getPassageTwinePosition(passage);
-	
-    var videoElements = document.querySelectorAll("video");
-
-	if (videoElements !== null){
-
-		for (var i = 0; i < videoElements.length; i++) {
-			
-			videoElements[i].pause();
-		}
-
-	}
-    
-	
-  var scene = document.querySelector("#container");
-  removeAllChildren(scene);
-  // currentPassageTwinePosition = getPassageTwinePosition(passage);
-
-  
-  document.querySelector("a-scene").setAttribute("background", "color: black");
-  
-  var processed = window.story.render(passage.getAttribute("pid"));
-  passage.processedContent = processed;
-  var backgrounds = getBackgroundsInPassage(passage);
-  for (var i = 0; i < backgrounds.length; i++) {
-	  var sky = getPassageSky(backgrounds[i], window.passage.name);
-	  if (sky !== null) {
-	  	scene.appendChild(sky);
-	  }
-    
-  }
-
-  var links = getLinksInPassage(passage);
-  for (var i = 0; i < links.length; i++) {
-    var link = links[i];
-    var linkElement = createPassageLink(link, i, window.passage.position);
-    scene.appendChild(linkElement);
-  }
-  
-  var panels = getPanelsInPassage(passage);
-  for (var i = 0; i < panels.length; i++) {
-	  var panel = panels[i];
-	  var panelElement = createPassageText(panel, i, window.passage.position);
-	  scene.appendChild(panelElement);
-  }
-
-  var sounds = getSoundsInPassage(passage);
-  for (var i = 0; i < sounds.length; i++) {
-    var sound = sounds[i];
-    var soundElement = createSoundElement(sound);
-    scene.appendChild(soundElement);
-  }
-
-  if (backgrounds.length === 0) {
-  	  // var textBlock = getTextInPassage(passage);
-  	  // var textElement = createPassageText(textBlock, 0, currentPassageTwinePosition);
-  	  // scene.appendChild(textElement);
-  	  var defaultSky = getPassageSky({options:{"transparent":false}}, window.passage.name);
-  	  scene.appendChild(defaultSky);
-  }
-
-
-}
-function getPassageById(passageId) {
-	return window.story.passage(passageId);
-}
-function getPassageByName(name) {
-	return window.story.passage(name);
-}
-
-function getPassageTwinePosition(passage) {
-	if (passage === undefined){
-		console.log(`could not find position of passage with name: ${name}`)
-		return {x:0, y:0};
-	}
-	var coordString = passage.getAttribute("position");
-	if (coordString === undefined) {
-		return {x:0, y:0};
-	}
-	var coordA = coordString.split(",");
-	console.log(coordA);
-	return {x:coordA[0], y:coordA[1]};
-}
-
-function getLinksInPassage(passage) {
-	// match beginning of text, or options JSON, or any character other than `, then [[text]] or [[text|link]], with optional spaces between
-	// brackets and json/text
-  var rexp = /(^|({\s*(.+)\s*})|[^`])\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
-  var passageText = passage.processedContent;
-  var links = [];
-  var array1;
-  while ((array1 = rexp.exec(passageText)) !== null) {
-    var options = {};
-    if (array1[2]) {
-      options = JSON.parse(array1[1]);
-    }
-    if (array1[5]) {
-		var newPassage = getPassageByName(array1[6]);
-		
-      links.push({ text: array1[5], link: array1[6], options: options, twinePosition: getPassageTwinePosition(newPassage) });
-    } else {
-		var newPassage = getPassageByName(array1[7]);
-      links.push({ text: array1[7], link: array1[7], options: options, twinePosition: getPassageTwinePosition(newPassage)  });
-    }
-  }
-  return links;
-}
-
-function getBackgroundsInPassage(passage) {
-  // var rexp = /\(\((.+)\)\)/g;
-  var rexp = /({\s*(.+)\s*})?\(\(\s*(.+)\s*\)\)/g;
-  var passageText = passage.processedContent;
-  var backgrounds = [];
-  var array1;
-  while ((array1 = rexp.exec(passageText)) !== null) {
-	  var options = {};
-	  if (array1[1]) {
-		  options = JSON.parse(array1[1]);
-	  }
-	  backgrounds.push({src:array1[3], options});
-  }
-  return backgrounds;
-}
-function getSoundsInPassage(passage) {
-  var rexp = /({\s*(.+)\s*})?~~\s*(.+)\s*~~/g;
-  var passageText = passage.processedContent;
-  var sounds = [];
-  var array1;
-  while ((array1 = rexp.exec(passageText)) !== null) {
-    var options = {};
-    if (array1[1]) {
-      options = JSON.parse(array1[1]);
-    }
-    sounds.push({ src: array1[3], options });
-  }
-  return sounds;
-}
-
-function getTextInPassage(passage) {
-	var rexp = /({\s*.+\s*})?`?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
-	var passageText = passage.processedContent;
-	return {text: passageText.replace(rexp, ""), options:{direction: 0}};
-}
-
-function getPanelsInPassage(passage) {
-	// var rexp = /({\s*(.+)\s*})?`([^`]+)`/g;
-	//
-	// var passageText = passage.textContent;
-	// var panels = [];
-	//     while ((array1 = rexp.exec(passageText)) !== null) {
-	//       var options = {};
-	//       if (array1[1]) {
-	//         options = JSON.parse(array1[1]);
-	//       }
-	//       panels.push({ text: array1[3], options });
-	//     }
-	//     return panels;
-    var rexp = /({\s*(.+)\s*})?`\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
-    var passageText = passage.processedContent;
-    var links = [];
-    var array1;
-    while ((array1 = rexp.exec(passageText)) !== null) {
-      var options = {};
-      if (array1[1]) {
-        options = JSON.parse(array1[1]);
-      }
-      if (array1[4]) {
-  		var newPassage = getPassageByName(array1[5]);
-		newPassage.processedContent = window.story.render(newPassage.getAttribute("pid"));
-		var backgrounds = getBackgroundsInPassage(newPassage);
-        links.push({ text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
-      } else {
-  		var newPassage = getPassageByName(array1[6]);
-		newPassage.processedContent = window.story.render(newPassage.getAttribute("pid"));
-		var backgrounds = getBackgroundsInPassage(newPassage);
-        links.push({ text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
-      }
-    }
-    return links;
-}
 
 AFRAME.registerComponent("reach_passage_link", {
   schema: {
@@ -259,14 +72,14 @@ AFRAME.registerComponent("reach-load-local", {
 		console.log("here");
 		document.querySelector("a-scene").setAttribute("cursor", "rayOrigin: mouse");
 		document.querySelector("a-scene").setAttribute("raycaster", "objects: .clickable");
-		
 
-		
-		
+
+
+
 		// cursor.setAttribute("cursor", "fuse: true;");
 		var storyData = storyDocument.querySelector("tw-storydata");
 	    startnode = storyData.getAttribute("startnode");
-		  
+
 	  	// run user scripts from story
 	  	var userScripts = storyDocument.querySelector("tw-storydata").querySelectorAll('*[type="text/twine-javascript"]');
 		var passagesByID = {};
@@ -276,7 +89,7 @@ AFRAME.registerComponent("reach-load-local", {
 			var id = passagesArray[i].getAttribute("pid");
 			var name = passagesArray[i].getAttribute("name");
 			if (id != undefined) {
-				passagesByID[id] = passagesArray[i];								
+				passagesByID[id] = passagesArray[i];
 			}
 			if (name != undefined) {
 				passagesByName[name] = passagesArray[i];
@@ -301,16 +114,16 @@ AFRAME.registerComponent("reach-load-local", {
 			passagesByName: passagesByName,
 			currentCursor: undefined,
 			hud: undefined
-			
+
 		}
-		
+
 		window.passage = {};
 		window.reachMixins = {};
-		
+
 		window.registerMixin = function(id, attributes) {
 			reachMixins[id] = attributes;
 		}
-		
+
 		window.story.passage = function(idOrName) {
 
 			if (window.story.passages[idOrName] != undefined) {
@@ -318,7 +131,7 @@ AFRAME.registerComponent("reach-load-local", {
 			}
 			return window.story.passagesByName[idOrName];
 		}
-		
+
 		window.story.render = function(idOrName) {
 			var passage = window.story.passage(idOrName);
 			if (passage === undefined) {
@@ -328,28 +141,27 @@ AFRAME.registerComponent("reach-load-local", {
 			return _.template(passage.textContent)({s: window.story.state});
 		}
 		window.story.show = function(idOrName, hideFromHistory) {
-			var passage = window.story.passage(idOrName);
-			if (passage === undefined) {
-				console.log("Error: passage not found: " + idOrName);
-				return;
+					    var videoElements = document.querySelectorAll("video");
+
+			if (videoElements !== null){
+
+				for (var i = 0; i < videoElements.length; i++) {
+
+					videoElements[i].pause();
+				}
+
 			}
-			if (hideFromHistory !== true) {
-				window.story.history.push(passage.getAttribute("pid"));
-			}
-			window.passage = {
-				id: passage.getAttribute("pid"),
-				name: passage.getAttribute("name"),
-				tags: passage.getAttribute("tags"),
-				position: getPassageTwinePosition(passage),
-				source: passage.textContent
-			}
-			loadPassage(passage);
+
+			
+					  var scene = document.querySelector("#container");
+					  scene.setAttribute("reach_passage", {id: idOrName, name: idOrName, hideFromHistory: hideFromHistory});
+					  document.querySelector("a-scene").setAttribute("background", "color: black");
 		}
-		
+
 		window.story.start = function() {
 			window.story.show(window.story.startnode);
 		}
-		
+
 		window.story.stats = function(show) {
 			if (show === true) {
 				document.querySelector("a-scene").setAttribute("stats", true);
@@ -357,7 +169,7 @@ AFRAME.registerComponent("reach-load-local", {
 				document.querySelector("a-scene").removeAttribute("stats");
 			}
 		}
-		window.story.cursor = function(show) {			
+		window.story.cursor = function(show) {
 			if (show === true) {
 				if (window.story.currentCursor === undefined) {
 					var newCursor = document.createElement("a-entity");
@@ -380,7 +192,7 @@ AFRAME.registerComponent("reach-load-local", {
 				}
 			}
 		}
-		
+
 		window.story.lookPosition = function(show) {
 			if (show === true) {
 				if (window.story.hud === undefined) {
@@ -394,7 +206,7 @@ AFRAME.registerComponent("reach-load-local", {
 					    `color:  #000000;  shader:  flat; opacity: 0.3;`
 					  );
 					  window.story.hud = hudtext;
-					  
+
 					var camera = document.querySelector("a-camera");
 					camera.appendChild(hudtext);
 					camera.setAttribute("reach_rotation_reader", "");
@@ -422,9 +234,9 @@ AFRAME.registerComponent("reach-load-local", {
 	  		} catch(error) {
 	  			console.log(error);
 	  		}
-		
+
 	  	}
-		
+
 		if (window.reach_preload_images !== null) {
 			for (var i in window.reach_preload_images) {
 				var idTag = i;
@@ -434,17 +246,17 @@ AFRAME.registerComponent("reach-load-local", {
 				img.setAttribute("crossorigin", "anonymous");
 				img.setAttribute("id", idTag);
 				img.setAttribute("src", src);
-				
+
 				storyDocument.querySelector("a-assets").appendChild(img);
 
 			}
 		}
-		
-		
+
+
 		if (window.story.isMobile() === true) {
 			window.story.cursor(true);
 		}
-		
+
 		window.story.start();
 
 	}
