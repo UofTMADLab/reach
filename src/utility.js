@@ -61,4 +61,30 @@ function reachInclinationToRadians(inclination) {
 	return (inclination % 12) / 12.0 * 2.0 * Math.PI;
 }
 
-export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString};
+function mergeMixins(mixins, local) {
+	var mixinsSplit = mixins.split(' ');
+	var result = {};
+	for (var i in mixinsSplit) {
+		var mixinName = mixinsSplit[i];
+		var mixin = window.reachMixins[mixinName];
+		if (!mixin) {
+			console.log(`Reach Warning: mixin not found: ${mixinName}` );
+			continue;
+		}
+		for (var a in mixin) {		
+			if (mixin[a]) {
+				result[a] = mixin[a];
+			}			
+		}
+	}
+	for (var la in local) {
+		if (local[la]) {
+			result[la] = local[la];
+		}		
+	}
+	
+	return result;
+}
+const REACH_DEFAULT_NULL = "reach_default_null_754";
+
+export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL, mergeMixins};

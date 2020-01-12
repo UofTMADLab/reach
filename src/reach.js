@@ -1,5 +1,6 @@
-console.log("REACH-0.0.18,18");
+console.log("REACH-1.0.0,39"); 
 import './underscore-min.js';
+import './text-panel-component.js';
 import {getSrc, removeAllChildren} from './utility.js';
 import {getPassageSky} from './sky.js';
 import {createSoundElement} from './sound.js';
@@ -304,6 +305,11 @@ AFRAME.registerComponent("reach-load-local", {
 		}
 		
 		window.passage = {};
+		window.reachMixins = {};
+		
+		window.registerMixin = function(id, attributes) {
+			reachMixins[id] = attributes;
+		}
 		
 		window.story.passage = function(idOrName) {
 
