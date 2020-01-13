@@ -3,6 +3,7 @@ import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
 import './reach_sound.js';
+import './reach_sky.js';
 import './arrow.js';
 import {getSrc} from './utility.js';
 
