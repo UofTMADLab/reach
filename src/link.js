@@ -6,90 +6,9 @@ import {
 	mergeMixins
 } from './utility.js';
 
-function createFloorLink(link, linkIndex, currentPassageTwinePosition) {
-
-	var outer = document.createElement("a-entity");
-	var direction = 0;
-
-	if (link.options.direction !== undefined) {
-		direction = (link.options.direction % 12) * -30.0;
-	}
-
-
-	outer.setAttribute("rotation", `0 ${direction} 0`);
-
-	var inner = document.createElement("a-entity");
-
-	var distance = -2.0;
-	if (link.options.distance !== undefined) {
-		distance = -1.0 * link.options.distance;
-	}
-
-	inner.setAttribute("position", `0 0 ${distance}`);
-	inner.setAttribute("rotation", `-90 0 0`);
-
-	var background = document.createElement("a-entity");
-	background.setAttribute("class", "clickable");
-	background.setAttribute("id", "background");
-	background.setAttribute(
-		"reach_passage_link",
-		`name: ${link.link}; event: click`
-	);
-	var backgroundColor = "#0000ff";
-	var backgroundOpacity = "0.7";
-	var backgroundShape = "circle";
-	if (link.options.backgroundColor !== undefined) {
-		backgroundColor = link.options.backgroundColor;
-	}
-	if (link.options.backgroundOpacity !== undefined) {
-		backgroundOpacity = link.options.backgroundOpacity;
-	}
-	if (link.options.shape !== undefined && link.options.shape !== "arrow") {
-		backgroundShape = link.options.shape;
-	}
-	if (link.options.shape != "arrow") {
-		background.setAttribute("geometry", `primitive: ${backgroundShape};`);
-		background.setAttribute(
-			"material",
-			`color:  ${backgroundColor};  shader:  flat; opacity: ${backgroundOpacity};`
-		);
-	}
-
-
-	if (link.options.shape === "arrow") {
-		var arrow = document.createElement("a-entity");
-		arrow.setAttribute("class", "clickable");
-		arrow.setAttribute("reach_passage_link", `name: ${link.link}; event: click`);
-		// arrow.setAttribute("rotation", "90 0 0");
-		arrow.setAttribute("geometry", `primitive: arrow;`);
-		arrow.setAttribute(
-			"material",
-			`color:  ${backgroundColor};  shader:  standard; opacity: ${backgroundOpacity};`
-		);
-		background.appendChild(arrow);
-	}
-	var text = document.createElement("a-entity");
-	var textColor = "#FAFAFA";
-	if (link.options.color !== undefined) {
-		textColor = link.options.color;
-	}
-	text.setAttribute(
-		"text",
-		`align: center; color: ${textColor}; wrapCount: 18; width: 0.65; value: ${link.text};`
-	);
-	text.setAttribute("position", "0 0 0.05");
-
-	outer.appendChild(inner);
-	inner.appendChild(background);
-	inner.appendChild(text);
-	return outer;
-}
 
 function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
-	
-	if (link.options.floor === true) {
-		return createFloorLink(link, linkIndex, currentPassageTwinePosition);
-	}
+
 	var direction = undefined;
 	var directionInDegrees = undefined;
 	if (link.twinePosition !== undefined) {
@@ -154,7 +73,8 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		color: link.options.color,
 		text: link.text,
 		link: link.link,
-		arrow: link.options.arrow
+		arrow: link.options.arrow,
+		floor: link.options.floor
 	};
 	
 	var defaultOptions = {

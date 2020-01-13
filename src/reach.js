@@ -11,9 +11,9 @@ import {getSrc} from './utility.js';
 
 var storyDocument;
 var startnode;
+            
       
-      
-      
+       
 AFRAME.registerComponent("reach_passage_link", {
   schema: {
     event: { type: "string", default: "" },

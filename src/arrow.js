@@ -71,7 +71,7 @@ AFRAME.registerComponent("reach_arrow", {
 		this.background.setAttribute("id", "arrow");
 		this.background.setAttribute("geometry", `primitive: arrow;`);
 		this.background.setAttribute("rotation", `-90 0 0`);
-		this.background.setAttribute("material", `color: ${this.data.color}; shader: flat; opacity: ${this.data.opacity}`);
+		this.background.setAttribute("material", `color: ${this.data.color}; opacity: ${this.data.opacity}`);
 		
 		
 		if (this.data.link !== REACH_DEFAULT_NULL) {
