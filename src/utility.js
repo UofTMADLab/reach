@@ -61,25 +61,25 @@ function reachInclinationToRadians(inclination) {
 	return (inclination % 12) / 12.0 * 2.0 * Math.PI;
 }
 
-function mergeMixins(mixins, local) {
-	if (!mixins) {
-		return local;
-	}
-	var mixinsSplit = mixins.split(' ');
-	var result = {};
-	for (var i in mixinsSplit) {
-		var mixinName = mixinsSplit[i];
-		var mixin = window.reachMixins[mixinName];
-		if (!mixin) {
-			console.log(`Reach Warning: mixin not found: ${mixinName}` );
-			continue;
+function mergeMixins(mixins, local, defaultValues = {}) {
+	var result = defaultValues;
+	if (mixins) {
+		var mixinsSplit = mixins.split(' ');
+		for (var i in mixinsSplit) {
+			var mixinName = mixinsSplit[i];
+			var mixin = window.reachMixins[mixinName];
+			if (!mixin) {
+				console.log(`Reach Warning: mixin not found: ${mixinName}` );
+				continue;
+			}
+			for (var a in mixin) {		
+				if (mixin[a]) {
+					result[a] = mixin[a];
+				}			
+			}
 		}
-		for (var a in mixin) {		
-			if (mixin[a]) {
-				result[a] = mixin[a];
-			}			
-		}
 	}
+
 	for (var la in local) {
 		if (local[la]) {
 			result[la] = local[la];

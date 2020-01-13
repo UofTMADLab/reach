@@ -155,38 +155,20 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		text: link.text,
 		link: link.link,
 		arrow: link.options.arrow
-	}
+	};
 	
-	var mergedOptions = mergeMixins(link.options.mixin, localOptions);
+	var defaultOptions = {
+		direction: linkIndex + 1,
+		directionInDegrees: false,
+		backgroundSize: {x: 1.0, y: 1.0},
+		backgroundColor: "#0000AA",
+		backgroundOpacity: 0.7,
+		color: "#FFFFFF",
+		text: link.link
+	};
 	
-	if (!mergedOptions.direction) {
-		mergedOptions.direction = linkIndex + 1;
-		mergedOptions.directionInDegrees = false;
-	}
+	var mergedOptions = mergeMixins(link.options.mixin, localOptions, defaultOptions);
 	
-	if (!mergedOptions.directionInDegrees) {
-		mergedOptions.directionInDegrees = false;
-	}
-	
-	if (!mergedOptions.backgroundSize) {
-		mergedOptions.backgroundSize = {x: 1.0, y: 1.0};
-	}
-	
-	if (!mergedOptions.backgroundColor) {
-		mergedOptions.backgroundColor = "#0000AA";
-	}
-	
-	if (!mergedOptions.backgroundOpacity) {
-		mergedOptions.backgroundOpacity = 0.7;
-	}
-	
-	if (!mergedOptions.color) {
-		mergedOptions.color = "#FFFFFF";
-	}
-	
-	if (!mergedOptions.text) {
-		mergedOptions.text = mergedOptions.link;
-	}
 	el.setAttribute("reach_text_panel", mergedOptions);
 	
 
@@ -261,19 +243,15 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 		color: text.options.color,
 		text: text.text,
 		arrow: text.options.arrow
-	}
+	};
 	
-	var mergedOptions = mergeMixins(text.options.mixin, localOptions);
+	var defaultOptions = {
+		direction:  (textIndex + 1) * 2.0,
+		directionInDegrees: false
+	};
 	
-	if (mergedOptions.direction === undefined) {
-		mergedOptions.direction =  (textIndex + 1) * 2.0;
-		mergedOptions.directionInDegrees = false;
-	}
-	
-	if (mergedOptions.directionInDegrees === undefined) {
-		mergedOptions.directionInDegrees = false;
-	}
-	
+	var mergedOptions = mergeMixins(text.options.mixin, localOptions, defaultOptions);
+
 	el.setAttribute("reach_text_panel", mergedOptions);
 
 	return el;

@@ -2,16 +2,15 @@ console.log("REACH-1.0.0,42");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
-import {getSrc, removeAllChildren} from './utility.js';
-import {getPassageSky} from './sky.js';
-import {createSoundElement} from './sound.js';
-import {createPassageLink, createPassageText} from './link.js';
+import './reach_sound.js';
 import './arrow.js';
+import {getSrc} from './utility.js';
+
 
 var storyDocument;
 var startnode;
-
-  
+     
+    
 
 AFRAME.registerComponent("reach_passage_link", {
   schema: {
@@ -238,7 +237,10 @@ AFRAME.registerComponent("reach-load-local", {
 	  	}
 
 		if (window.reach_preload_images !== null) {
+			var count = 0;
+			var current = 0;
 			for (var i in window.reach_preload_images) {
+				count += 1;
 				var idTag = i;
 				var src = getSrc(window.reach_preload_images[i]);
 				var img = document.createElement("img");
@@ -246,6 +248,10 @@ AFRAME.registerComponent("reach-load-local", {
 				img.setAttribute("crossorigin", "anonymous");
 				img.setAttribute("id", idTag);
 				img.setAttribute("src", src);
+				img.addEventListener("load", function(evt) {
+					current = current + 1;
+					console.log(`loaded ${current} of ${count} images` );					
+				});
 
 				storyDocument.querySelector("a-assets").appendChild(img);
 

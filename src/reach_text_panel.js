@@ -58,7 +58,6 @@ AFRAME.registerComponent("reach_text_panel", {
 		}
 		
 		if (this.data.arrow === true) {
-			console.log("arrow");
 			var arrow = document.createElement("a-entity");
 			arrow.setAttribute("reach_arrow", {
 				distance: 0.0,
