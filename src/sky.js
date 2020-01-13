@@ -1,4 +1,4 @@
-import {getSrc, mergeMixins} from './utility.js';
+import {mergeMixins} from './utility.js';
 import {createVideoSphere} from './video.js';
 
 function getPassageSky(background, currentPassageName) {

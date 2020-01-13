@@ -4,15 +4,16 @@ import './reach_passage.js';
 import './reach_text_panel.js';
 import './reach_sound.js';
 import './reach_sky.js';
+import './reach_video.js';
 import './arrow.js';
 import {getSrc} from './utility.js';
 
 
 var storyDocument;
 var startnode;
-     
-    
-
+      
+      
+      
 AFRAME.registerComponent("reach_passage_link", {
   schema: {
     event: { type: "string", default: "" },
@@ -144,9 +145,9 @@ AFRAME.registerComponent("reach-load-local", {
 					    var videoElements = document.querySelectorAll("video");
 
 			if (videoElements !== null){
-
+				
 				for (var i = 0; i < videoElements.length; i++) {
-
+					console.log(`pausing video ${i}`);
 					videoElements[i].pause();
 				}
 
