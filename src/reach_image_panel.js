@@ -1,6 +1,6 @@
-import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
+import {REACH_DEFAULT_NULL, REACH_DEFAULT_NULL_NUMBER, getSrc} from './utility.js';
 
-AFRAME.registerComponent("reach_text_panel", {
+AFRAME.registerComponent("reach_image_panel", {
 	
 	schema: {
 		
@@ -10,15 +10,11 @@ AFRAME.registerComponent("reach_text_panel", {
 		inclination: {type: "number", default: 0.0},
 		distance: {type: "number", default: 2.0},
 		yHeight: {type: "number", default: 1.6},
-		backgroundSize: {type: "vec2", default: {x:1.5, y:1.5 / 8.5 * 11.0}},
-		text:{type: "string", default: ""},
-		backgroundColor: {type: "color", default: "#ffffff"},
-		backgroundOpacity: {type: "number", default: 0.7},
-		backgroundShape: {type: "string", default: "plane"},
+		width: {type: "number", default: REACH_DEFAULT_NULL_NUMBER},
+		height: {type: "number", default: REACH_DEFAULT_NULL_NUMBER},
+		opacity: {type: "number", default: 1.0},
 		img: {type: "string", default: REACH_DEFAULT_NULL},
-		color: {type: "color", default: "#000000"},
 		link: {type: "string", default: REACH_DEFAULT_NULL},
-		arrow: {type: "boolean", default: false},
 		floor: {type: "boolean", default: false}
 		
 		
@@ -26,19 +22,31 @@ AFRAME.registerComponent("reach_text_panel", {
 	init: function() {
 		var self = this;
 		this.imageLoadedHandler = function(evt) {
-			console.log("NEW IMAGE:" + evt.target.getObject3D('mesh').material.map.image.naturalHeight);
+		
 			var image = evt.target.getObject3D('mesh').material.map.image;
 			var width = image.naturalWidth;
 			var height = image.naturalHeight;
-			if (width === 0) {
+			if (width === 0 || height === 0) {
 				return;
 			}
 			var aspect = height / width;
-			var localWidth = self.data.backgroundSize.x;
-			var localHeight = aspect * localWidth;
-			console.log(`image: ${width}, ${height} ${localWidth}, ${localHeight}`);
+			if (aspect === 0 ) {
+				return;
+			}
+			var localWidth = 1.0;
+			var localHeight = aspect;
+			if (self.data.width !== REACH_DEFAULT_NULL_NUMBER && self.data.height == REACH_DEFAULT_NULL_NUMBER) {
+				localWidth = self.data.width;
+				localHeight = aspect * localWidth;							
+			} else if (self.data.width == REACH_DEFAULT_NULL_NUMBER && self.data.height !== REACH_DEFAULT_NULL_NUMBER ) {
+				localHeight = self.data.height;
+				localWidth = localHeight / aspect;
+			} else if (self.data.width !== REACH_DEFAULT_NULL_NUMBER && self.data.height !== REACH_DEFAULT_NULL_NUMBER) {
+				localWidth = self.data.width;
+				localHeight = self.data.height;
+			}
 			
-			self.background.setAttribute("geometry", `primitive: ${self.data.backgroundShape}; width: ${localWidth}; height: ${localHeight}`);
+			self.background.setAttribute("geometry", `primitive: plane; width: ${localWidth}; height: ${localHeight}`);				
 		}
 	},
 	update: function(oldData) {
@@ -59,7 +67,7 @@ AFRAME.registerComponent("reach_text_panel", {
 		}
 		// override default yHeight & rotate to face up if floor-link
 		var yHeight = this.data.floor === true ? 0 : this.data.yHeight;
-		var innerRotation = (this.data.floor === true && this.data.arrow === false) ? -90.0 : 0.0;
+		var innerRotation = (this.data.floor === true) ? -90.0 : 0.0;
 		this.head = document.createElement("a-entity");
 		this.head.setAttribute("position", `0 ${yHeight} 0`);
 		this.outer = document.createElement("a-entity");		
@@ -71,18 +79,15 @@ AFRAME.registerComponent("reach_text_panel", {
 		this.background = document.createElement("a-entity");
 		this.background.setAttribute("id", "background");
 		
-		if (this.data.floor === false || this.data.arrow === false) {
-			this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
+
+			this.background.setAttribute("geometry", `primitive: plane;`);
+			
 			if (this.data.img !== REACH_DEFAULT_NULL) {
 				this.background.addEventListener("materialtextureloaded", this.imageLoadedHandler);
-				this.background.setAttribute("material", `shader: flat; opacity: ${this.data.backgroundOpacity}; src: ${getSrc(this.data.img)}; transparent: true`);
+				this.background.setAttribute("material", `shader: flat; opacity: ${this.data.opacity}; src: ${getSrc(this.data.img)}; transparent: true`);
 								
-			} else {
-				this.background.setAttribute("material", `color: ${this.data.backgroundColor}; shader: flat; opacity: ${this.data.backgroundOpacity}`);
 			}
-			this.background.setAttribute("text", `align: center; color: ${this.data.color}; width: 0.85; wrapCount: 18; value: ${this.data.text};`);
-		}
-
+		
 		
 		if (this.data.link !== REACH_DEFAULT_NULL) {
 			this.background.setAttribute("class", "clickable");
@@ -92,17 +97,7 @@ AFRAME.registerComponent("reach_text_panel", {
 			);
 		}
 		
-		if (this.data.arrow === true) {
-			var arrow = document.createElement("a-entity");
-			arrow.setAttribute("reach_arrow", {
-				distance: 0.0,
-				yHeight: -1.0 * yHeight,
-				opacity: this.data.backgroundOpacity,
-				color: this.data.backgroundColor,
-				link: this.data.link
-			});
-			this.background.appendChild(arrow);
-		}
+	
 		
 		this.head.appendChild(this.outer);
 		this.outer.appendChild(this.inner);

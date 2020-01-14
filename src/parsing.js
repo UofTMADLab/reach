@@ -42,6 +42,23 @@ function getLinksInPassage(passage) {
   return links;
 }
 
+function getImagePanelsInPassage(passage) {
+
+  var rexp = /(^|({\s*(.+)\s*})|[^`])\[img\[(\s*(.+)\s*)\](\s*\]|((.+))\])/g;
+  var passageText = passage.processedContent;
+  var images = [];
+  var array1;
+  while ((array1 = rexp.exec(passageText)) !== null) {
+    var options = {};
+    if (array1[2]) {
+      options = JSON.parse(array1[2]);
+    };
+	images.push({ img: array1[5], link: array1[7], options: options});
+
+  }
+  return images;
+}
+
 function getBackgroundsInPassage(passage) {
   // var rexp = /\(\((.+)\)\)/g;
   var rexp = /({\s*(.+)\s*})?\(\(\s*(.+)\s*\)\)/g;
@@ -114,4 +131,4 @@ function getPanelsInPassage(passage) {
     }
     return links;
 }
-export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage};
+export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage};

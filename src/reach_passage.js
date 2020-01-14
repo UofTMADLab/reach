@@ -1,6 +1,7 @@
 import {REACH_DEFAULT_NULL} from './utility.js';
-import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage} from './parsing.js';
+import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage} from './parsing.js';
 import {getPassageSky} from './sky.js';
+import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
 import {createPassageLink, createPassageText} from './link.js';
 
@@ -78,6 +79,13 @@ AFRAME.registerComponent("reach_passage", {
 	  	  var panelElement = createPassageText(panel, i, window.passage.position);
 	  	  scene.appendChild(panelElement);
 	    }
+		
+		var imagePanels = getImagePanelsInPassage(this.passage);
+		for (var i = 0; i < imagePanels.length; i++) {
+			var imagePanel = imagePanels[i];
+			var panelElement = getImagePanel(imagePanel);
+			scene.appendChild(panelElement);
+		}
 
 	    var sounds = getSoundsInPassage(this.passage);
 	    for (var i = 0; i < sounds.length; i++) {

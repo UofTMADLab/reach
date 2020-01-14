@@ -85,10 +85,11 @@ function mergeMixins(mixins, local, defaultValues = {}) {
 			result[la] = local[la];
 		}		
 	}
-	
+	result.mixin = undefined;
 	return result;
 }
 
 const REACH_DEFAULT_NULL = "reach_default_null_754";
+const REACH_DEFAULT_NULL_NUMBER = -9999;
 
-export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL, mergeMixins};
+export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL,REACH_DEFAULT_NULL_NUMBER, mergeMixins};

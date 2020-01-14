@@ -2,6 +2,7 @@ console.log("REACH-1.0.0,44");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
+import './reach_image_panel.js';
 import './reach_sound.js';
 import './reach_sky.js';
 import './reach_video.js';

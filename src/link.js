@@ -53,14 +53,11 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		console.log(size);
 	}
 	
-	var backgroundSrc = undefined;
-	if (link.backgrounds && link.backgrounds[0]) {
-		backgroundSrc = link.backgrounds[0].src;
-	}
 	
 	var el = document.createElement("a-entity");
 
 	var localOptions =  {
+		id: link.options.id,
 		direction: direction,
 		directionInDegrees: directionInDegrees,
 		inclination: inclination,
@@ -69,7 +66,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		backgroundColor: link.options.backgroundColor,
 		backgroundOpacity: link.options.backgroundOpacity,
 		backgroundShape: link.options.backgroundShape,
-		backgroundSrc: backgroundSrc,
+		img: link.options.img,
 		color: link.options.color,
 		text: link.text,
 		link: link.link,
@@ -151,6 +148,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	var el = document.createElement("a-entity");
 
 	var localOptions =  {
+		id: text.options.id,
 		direction: direction,
 		directionInDegrees: directionInDegrees,
 		inclination: inclination,
@@ -159,7 +157,7 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 		backgroundColor: text.options.backgroundColor,
 		backgroundOpacity: text.options.backgroundOpacity,
 		backgroundShape: text.options.backgroundShape,
-		backgroundSrc: backgroundSrc,
+		img: text.options.img,
 		color: text.options.color,
 		text: text.text,
 		arrow: text.options.arrow
