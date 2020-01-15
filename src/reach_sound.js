@@ -2,7 +2,7 @@ import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
 AFRAME.registerComponent("reach_sound", {
 	
 	schema: {
-		
+		id: {type: "string", default: REACH_DEFAULT_NULL},
 		direction: {type: "number", default: 0.0},
 		directionInDegrees: {type: "boolean", default: false},
 		inclination: {type: "number", default: 0.0},
@@ -25,7 +25,9 @@ AFRAME.registerComponent("reach_sound", {
 			this.outer = undefined;
 			this.soundElement = undefined;
 		}
-		
+		if (this.data.id !== REACH_DEFAULT_NULL) {
+			this.el.setAttribute("id", this.data.id);
+		}
 		this.head = document.createElement("a-entity");
 		this.head.setAttribute("position", `0 ${this.data.yHeight} 0`);
 		this.outer = document.createElement("a-entity");		
@@ -53,6 +55,17 @@ AFRAME.registerComponent("reach_sound", {
 			this.outer = undefined;
 			this.soundElement= undefined;
 		}
+	},
+	
+	setOption : function(name, value) {
+		var options = {};
+		options[name] = value;
+		
+		this.el.setAttribute("reach_sound", options);
+	},
+	
+	getOption : function(name) {
+		return this.data[name];
 	},
 	
 	// tick: function(time, timeDelta) {

@@ -1,4 +1,4 @@
-console.log("REACH-1.0.0,44");
+console.log("REACH-1.0.0,45");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -13,7 +13,7 @@ import {getSrc} from './utility.js';
 var storyDocument;
 var startnode;
             
-      
+       
        
 AFRAME.registerComponent("reach_passage_link", {
   schema: {
@@ -140,7 +140,7 @@ AFRAME.registerComponent("reach-load-local", {
 				console.log("Error: passage was not found: " + idOrName);
 				return;
 			}
-			return _.template(passage.textContent)({s: window.story.state});
+			return _.template(passage.textContent)({s: window.story.state, p: window.passage});
 		}
 		window.story.show = function(idOrName, hideFromHistory) {
 					    var videoElements = document.querySelectorAll("video");

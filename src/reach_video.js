@@ -3,7 +3,7 @@ import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
 AFRAME.registerComponent("reach_video", {
 	
 	schema: {
-		
+		id: {type: "string", default: "REACH_DEFAULT_NULL"},
 		autoplay: {type: "boolean", default: true},
 		loop: {type: "boolean", default: true},
 		videoId: {type: "string", default: "video"},
@@ -19,6 +19,11 @@ AFRAME.registerComponent("reach_video", {
 			this.el.removeChild(this.sky);
 			this.sky.destroy();
 		}
+		
+		if (this.data.id !== REACH_DEFAULT_NULL) {
+			this.el.setAttribute("id", this.data.id);
+		}
+		
 		var videoAsset = document.querySelector(`#${this.data.videoId}`);
 
 		if (!videoAsset) {
@@ -46,6 +51,23 @@ AFRAME.registerComponent("reach_video", {
 			this.sky.destroy();
 		}
 	},
+	hide : function() {
+		this.el.object3D.visible = false;
+	},
+
+	show : function() {
+		this.el.object3D.visible = true;
+	},
+	setOption : function(name, value) {
+		var options = {};
+		options[name] = value;
+		
+		this.el.setAttribute("reach_video", options);
+	},
+	
+	getOption : function(name) {
+		return this.data[name];
+	}
 	
 	// tick: function(time, timeDelta) {
 	//

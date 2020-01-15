@@ -44,9 +44,6 @@ AFRAME.registerComponent("reach_text_panel", {
 	update: function(oldData) {
 		
 		if (this.head) {
-			if (this.background) {
-				this.backgound.removeEventListener("materialtextureloaded", this.imageLoadedHandler);
-			}
 			this.el.removeChild(this.head);
 			this.head.destroy();
 			this.head = undefined;
@@ -122,6 +119,24 @@ AFRAME.registerComponent("reach_text_panel", {
 			this.inner= undefined;
 			this.background = undefined;
 		}
+	},
+	
+	hide : function() {
+		this.el.object3D.visible = false;
+	},
+
+	show : function() {
+		this.el.object3D.visible = true;
+	},
+	setOption : function(name, value) {
+		var options = {};
+		options[name] = value;
+		
+		this.el.setAttribute("reach_text_panel", options);
+	},
+	
+	getOption : function(name) {
+		return this.data[name];
 	},
 	
 	// tick: function(time, timeDelta) {

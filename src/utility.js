@@ -1,4 +1,7 @@
 function getDirectionBetweenPassages(a,b) {
+	if (!a || !b) {
+		return 0
+	}
 	var nb = {x: b.x - a.x, y: b.y - a.y};
 	var theta = 0;
 	if (nb.x === 0) {
