@@ -75,12 +75,15 @@ AFRAME.registerComponent("reach_sound", {
 	//
 	// },
 	
-	// pause: function() {
-	//
-	// },
-	// play: function() {
-	//
-	// },
+	pause: function() {
+		this.soundElement.components.sound.pauseSound();
+	},
+	playSound: function() {
+		this.soundElement.components.sound.playSound();
+	},
+	stopSound: function() {
+		this.soundElement.components.sound.stopSound();
+	},
 	// updateSchema: function(newData) {
 	//
 	// },

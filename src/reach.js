@@ -1,4 +1,4 @@
-console.log("REACH-1.0.0,45");
+console.log("REACH-1.0.49,49");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -122,8 +122,8 @@ AFRAME.registerComponent("reach-load-local", {
 		window.passage = {};
 		window.reachMixins = {};
 
-		window.registerMixin = function(id, attributes) {
-			reachMixins[id] = attributes;
+		window.story.registerMixin = function(id, attributes) {
+			window.reachMixins[id] = attributes;
 		}
 
 		window.story.passage = function(idOrName) {
@@ -164,6 +164,14 @@ AFRAME.registerComponent("reach-load-local", {
 			window.story.show(window.story.startnode);
 		}
 
+		window.story.on = function(eventName, callback) {
+			var superCallback = function (e) {
+				callback(e.detail.source, e);
+			}
+			var scene = document.querySelector("#container");
+			scene.addEventListener(eventName, superCallback);
+		}
+		
 		window.story.stats = function(show) {
 			if (show === true) {
 				document.querySelector("a-scene").setAttribute("stats", true);

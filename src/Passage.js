@@ -3,6 +3,7 @@ import {createPassageLink, createPassageText} from './link.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
+import {createVideoSphere} from './video.js';
 
 
 // methods and properties that are exposed to code in the story/passage via the 'p' variable or 'window.passage'
@@ -69,10 +70,35 @@ Passage.prototype.textPanel = function(text, options) {
 	return newPanel.components.reach_text_panel;
 }
 
-Passage.prototype.imagePanel = function(img, link, options) {
-	var newPanel = getImagePanel({img: img, link: link, options: options});
+Passage.prototype.linkPanel = function(text, link, options) {
+	var newPanel = createPassageLink({text: text, link: link, options: (options ? options : {})}, -1);
 	this.deferIfNecessary(function() {this.container.appendChild(newPanel);});
 	return newPanel.components.reach_text_panel;
+}
+
+Passage.prototype.imagePanel = function(img, link, options) {
+	var newPanel = getImagePanel({img: img, link: link, options: (options ? options : {})});
+	this.deferIfNecessary(function() {this.container.appendChild(newPanel);});
+	return newPanel.components.reach_image_panel;
+}
+
+Passage.prototype.sky = function(img, options) {
+	var newSky = getPassageSky({src: img, options: (options ? options : {})}, this.name);
+	this.deferIfNecessary(function() {this.container.appendChild(newSky);});
+	return newSky.components.reach_sky;
+}
+
+Passage.prototype.video = function(src, options) {
+
+	var newSky = createVideoSphere({src: src, options:  (options ? options : {})}, this.name);
+	this.deferIfNecessary(function() {this.container.appendChild(newSky);});
+	return newSky.components.reach_video;
+}
+
+Passage.prototype.sound = function(src, options) {
+	var newSound = createSoundElement({src: src, options: (options ? options : {})});
+	this.deferIfNecessary(function() {this.container.appendChild(newSound);});
+	return newSound.components.reach_sound;
 }
 
 Passage.prototype.getComponentWithId = function(id, componentType) {

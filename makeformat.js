@@ -2,7 +2,7 @@
 
 const _fs = require('fs');
 const _path = require('path');
-const version = "1.0.45";
+const version = "1.0.49";
 console.log("Making package")
 
 try {

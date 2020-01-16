@@ -1,11 +1,12 @@
 import {mergeMixins} from './utility.js';
 
 function createVideoSphere(background, currentPassageName) {
-	
+
 	var el = document.createElement("a-entity");
 
 	var localOptions = background.options;
 	localOptions.src = background.src;
+	localOptions.videoId = `video-${currentPassageName}`
 	localOptions.video = undefined;
 	
 	var mergedOptions = mergeMixins(background.options.mixin, localOptions);

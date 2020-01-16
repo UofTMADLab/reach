@@ -64,14 +64,17 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		distance: distance,
 		backgroundSize: backgroundSize,
 		backgroundColor: link.options.backgroundColor,
-		backgroundOpacity: link.options.backgroundOpacity,
+		opacity: link.options.opacity,
 		backgroundShape: link.options.backgroundShape,
 		img: link.options.img,
 		color: link.options.color,
 		text: link.text,
 		link: link.link,
 		arrow: link.options.arrow,
-		floor: link.options.floor
+		floor: link.options.floor,
+		onMouseEnter: link.options.onMouseEnter,
+		onMouseLeave: link.options.onMouseLeave,
+		onClick: link.options.onClick,
 	};
 	
 	var defaultOptions = {
@@ -79,7 +82,7 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 		directionInDegrees: false,
 		backgroundSize: {x: 1.0, y: 1.0},
 		backgroundColor: "#0000AA",
-		backgroundOpacity: 0.7,
+		opacity: 0.7,
 		color: "#FFFFFF",
 		text: link.link
 	};
@@ -155,12 +158,15 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 		distance: distance,
 		backgroundSize: backgroundSize,
 		backgroundColor: text.options.backgroundColor,
-		backgroundOpacity: text.options.backgroundOpacity,
+		opacity: text.options.opacity,
 		backgroundShape: text.options.backgroundShape,
 		img: text.options.img,
 		color: text.options.color,
 		text: text.text,
-		arrow: text.options.arrow
+		arrow: text.options.arrow,
+		onMouseEnter: text.options.onMouseEnter,
+		onMouseLeave: text.options.onMouseLeave,
+		onClick: text.options.onClick,
 	};
 	
 	var defaultOptions = {

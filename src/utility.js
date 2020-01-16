@@ -75,16 +75,17 @@ function mergeMixins(mixins, local, defaultValues = {}) {
 				console.log(`Reach Warning: mixin not found: ${mixinName}` );
 				continue;
 			}
-			for (var a in mixin) {		
-				if (mixin[a]) {
+			for (var a in mixin) {	
+				if (mixin[a] !== undefined)	 {
 					result[a] = mixin[a];
-				}			
+				}
+				
 			}
 		}
 	}
 
 	for (var la in local) {
-		if (local[la]) {
+		if (local[la] !== undefined){
 			result[la] = local[la];
 		}		
 	}
