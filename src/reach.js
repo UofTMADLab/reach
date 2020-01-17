@@ -1,4 +1,4 @@
-console.log("REACH-1.0.49,49");
+console.log("REACH-1.0.50,52");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -7,70 +7,78 @@ import './reach_sound.js';
 import './reach_sky.js';
 import './reach_video.js';
 import './arrow.js';
-import {getSrc} from './utility.js';
+import {
+	getSrc
+} from './utility.js';
 
 
 var storyDocument;
 var startnode;
-            
-       
-       
+
+
+
 AFRAME.registerComponent("reach_passage_link", {
-  schema: {
-    event: { type: "string", default: "" },
-    name: { type: "string", default: "" }
-  },
-  init: function() {
-    var self = this;
-    this.eventHandlerFn = function() {
-	  window.story.show(self.data.name);
-    };
-  },
+	schema: {
+		event: {
+			type: "string",
+			default: ""
+		},
+		name: {
+			type: "string",
+			default: ""
+		}
+	},
+	init: function() {
+		var self = this;
+		this.eventHandlerFn = function() {
+			window.story.show(self.data.name);
+		};
+	},
 
-  update: function(oldData) {
-    var data = this.data;
-    var el = this.el;
+	update: function(oldData) {
+		var data = this.data;
+		var el = this.el;
 
-    // `event` updated. Remove the previous event listener if it exists.
-    if (oldData.event && data.event !== oldData.event) {
-      el.removeEventListener(oldData.event, this.eventHandlerFn);
-    }
+		// `event` updated. Remove the previous event listener if it exists.
+		if (oldData.event && data.event !== oldData.event) {
+			el.removeEventListener(oldData.event, this.eventHandlerFn);
+		}
 
-    if (data.event) {
-      el.addEventListener(data.event, this.eventHandlerFn);
-    }
-  },
+		if (data.event) {
+			el.addEventListener(data.event, this.eventHandlerFn);
+		}
+	},
 
-  remove: function() {
-    var data = this.data;
-    var el = this.el;
+	remove: function() {
+		var data = this.data;
+		var el = this.el;
 
-    // Remove event listener.
-    if (data.event) {
-      el.removeEventListener(data.event, this.eventHandlerFn);
-    }
-  }
+		// Remove event listener.
+		if (data.event) {
+			el.removeEventListener(data.event, this.eventHandlerFn);
+		}
+	}
 });
 
 AFRAME.registerComponent('reach_rotation_reader', {
-	init:function() {
+	init: function() {
 		this.hudtext = document.querySelector("#hudtext");
 	},
-  tick: function () {
-    // `this.el` is the element.
-    // `object3D` is the three.js object.
+	tick: function() {
+		// `this.el` is the element.
+		// `object3D` is the three.js object.
 
-    // `rotation` is a three.js Euler using radians. `quaternion` also available.
-	  this.hudtext.setAttribute("text", `value: dir:${((this.el.object3D.rotation.y / (2.0 * Math.PI) * -12.0) % 12).toFixed(2)} ele:${((this.el.object3D.rotation.x / (2.0 * Math.PI) * 12.0) % 12).toFixed(2)}`);
+		// `rotation` is a three.js Euler using radians. `quaternion` also available.
+		this.hudtext.setAttribute("text", `value: dir:${((this.el.object3D.rotation.y / (2.0 * Math.PI) * -12.0) % 12).toFixed(2)} ele:${((this.el.object3D.rotation.x / (2.0 * Math.PI) * 12.0) % 12).toFixed(2)}`);
 
-    // `position` is a three.js Vector3.
-    // console.log(this.el.object3D.position);
-  }
+		// `position` is a three.js Vector3.
+		// console.log(this.el.object3D.position);
+	}
 });
 
 AFRAME.registerComponent("reach-load-local", {
 	init: function() {
-	    storyDocument = document;
+		storyDocument = document;
 		console.log("here");
 		document.querySelector("a-scene").setAttribute("cursor", "rayOrigin: mouse");
 		document.querySelector("a-scene").setAttribute("raycaster", "objects: .clickable");
@@ -80,14 +88,14 @@ AFRAME.registerComponent("reach-load-local", {
 
 		// cursor.setAttribute("cursor", "fuse: true;");
 		var storyData = storyDocument.querySelector("tw-storydata");
-	    startnode = storyData.getAttribute("startnode");
+		startnode = storyData.getAttribute("startnode");
 
-	  	// run user scripts from story
-	  	var userScripts = storyDocument.querySelector("tw-storydata").querySelectorAll('*[type="text/twine-javascript"]');
+		// run user scripts from story
+		var userScripts = storyDocument.querySelector("tw-storydata").querySelectorAll('*[type="text/twine-javascript"]');
 		var passagesByID = {};
 		var passagesByName = {};
 		var passagesArray = storyData.querySelectorAll("tw-passagedata");
-		for (var i = 0; i < passagesArray.length; i++){
+		for (var i = 0; i < passagesArray.length; i++) {
 			var id = passagesArray[i].getAttribute("pid");
 			var name = passagesArray[i].getAttribute("name");
 			if (id != undefined) {
@@ -140,13 +148,16 @@ AFRAME.registerComponent("reach-load-local", {
 				console.log("Error: passage was not found: " + idOrName);
 				return;
 			}
-			return _.template(passage.textContent)({s: window.story.state, p: window.passage});
+			return _.template(passage.textContent)({
+				s: window.story.state,
+				p: window.passage
+			});
 		}
 		window.story.show = function(idOrName, hideFromHistory) {
-					    var videoElements = document.querySelectorAll("video");
+			var videoElements = document.querySelectorAll("video");
 
-			if (videoElements !== null){
-				
+			if (videoElements !== null) {
+
 				for (var i = 0; i < videoElements.length; i++) {
 					console.log(`pausing video ${i}`);
 					videoElements[i].pause();
@@ -154,25 +165,41 @@ AFRAME.registerComponent("reach-load-local", {
 
 			}
 
-			
-					  var scene = document.querySelector("#container");
-					  var passagesToEnd = scene.querySelectorAll("[reach_passage]");
-					  for (var i = 0; i < passagesToEnd.length; i++) {
-						  var p = passagesToEnd[i];
-						  p.removeAttribute("reach_passage");
-						  p.remove();
-						  if (p.destroy) {
-							  p.destroy();
-						  }
-					  }
-					  
-					  window.traversedPassages = {};
-					  window.traversedPassages[window.story.passage(idOrName).getAttribute("name")] = true;
-					  
-					  var passageElement = document.createElement("a-entity");
-					  scene.appendChild(passageElement);
-					  passageElement.setAttribute("reach_passage", {id: idOrName, name: idOrName, hideFromHistory: hideFromHistory});
-					  document.querySelector("a-scene").setAttribute("background", "color: black");
+
+			var scene = document.querySelector("#container");
+			var passagesToEnd = scene.querySelectorAll("[reach_passage]");
+			while (scene.firstChild) {
+				var r = scene.firstChild;
+				if (r.removeAttribute) {
+					r.removeAttribute("reach_passage");
+				}
+
+				r.remove();
+
+				if (r.destroy) {
+					r.destroy();
+				}
+			}
+			// for (var i = 0; i < passagesToEnd.length; i++) {
+			// 						  var p = passagesToEnd[i];
+			// 						  p.removeAttribute("reach_passage");
+			// 						  p.remove();
+			// 						  // if (p.destroy) {
+			// 						  // 							  p.destroy();
+			// 						  // }
+			// }
+
+			window.traversedPassages = {};
+			window.traversedPassages[window.story.passage(idOrName).getAttribute("name")] = true;
+
+			var passageElement = document.createElement("a-entity");
+			scene.appendChild(passageElement);
+			passageElement.setAttribute("reach_passage", {
+				id: idOrName,
+				name: idOrName,
+				hideFromHistory: hideFromHistory
+			});
+			document.querySelector("a-scene").setAttribute("background", "color: black");
 		}
 
 		window.story.start = function() {
@@ -180,13 +207,13 @@ AFRAME.registerComponent("reach-load-local", {
 		}
 
 		window.story.on = function(eventName, callback) {
-			var superCallback = function (e) {
+			var superCallback = function(e) {
 				callback(e.detail.source, e);
 			}
 			var scene = document.querySelector("#container");
 			scene.addEventListener(eventName, superCallback);
 		}
-		
+
 		window.story.stats = function(show) {
 			if (show === true) {
 				document.querySelector("a-scene").setAttribute("stats", true);
@@ -227,10 +254,10 @@ AFRAME.registerComponent("reach-load-local", {
 					hudtext.setAttribute('id', "hudtext");
 					hudtext.setAttribute("geometry", `primitive: plane; width:auto; height:auto};`);
 					hudtext.setAttribute(
-					    "material",
-					    `color:  #000000;  shader:  flat; opacity: 0.3;`
-					  );
-					  window.story.hud = hudtext;
+						"material",
+						`color:  #000000;  shader:  flat; opacity: 0.3;`
+					);
+					window.story.hud = hudtext;
 
 					var camera = document.querySelector("a-camera");
 					camera.appendChild(hudtext);
@@ -251,37 +278,46 @@ AFRAME.registerComponent("reach-load-local", {
 		window.story.headsetConnected = function() {
 			return AFRAME.utils.device.checkHeadsetConnected();
 		}
-	  	for (var i = 0; i < userScripts.length; i++) {
-	  		var script = userScripts[i].innerHTML;
-	  ;
-	  		try {
-	  			eval(script);
-	  		} catch(error) {
-	  			console.log(error);
-	  		}
+		for (var i = 0; i < userScripts.length; i++) {
+			var script = userScripts[i].innerHTML;;
+			try {
+				eval(script);
+			} catch (error) {
+				console.log(error);
+			}
 
-	  	}
+		}
 
-		if (window.reach_preload_images !== null) {
+		window.story.preloadImages = function(imageIdsAndSrc) {
 			var count = 0;
-			var current = 0;
-			for (var i in window.reach_preload_images) {
+			var loadedCount = 0;
+			for (var i in imageIdsAndSrc) {
 				count += 1;
 				var idTag = i;
-				var src = getSrc(window.reach_preload_images[i]);
+				var src = getSrc(imageIdsAndSrc[i]);
 				var img = document.createElement("img");
 				//note must set crossorigin first before src otherwise it will start downloading without the crossorigin header
 				img.setAttribute("crossorigin", "anonymous");
 				img.setAttribute("id", idTag);
 				img.setAttribute("src", src);
 				img.addEventListener("load", function(evt) {
-					current = current + 1;
-					console.log(`loaded ${current} of ${count} images` );					
+					loadedCount = loadedCount + 1;					
+					window.passage.container.emit("reach_imagePreLoaded", {
+						source: {
+							src: evt.target.getAttribute("src"),
+							count: loadedCount,
+							total: count
+						}
+					});
 				});
 
 				storyDocument.querySelector("a-assets").appendChild(img);
 
 			}
+		}
+
+		if (window.reach_preload_images !== null) {
+			window.story.preloadImages(window.reach_preload_images);
 		}
 
 
@@ -299,4 +335,3 @@ var loadedScene = document.querySelector("a-scene");
 if (loadedScene != undefined) {
 	loadedScene.setAttribute("reach-load-local", true);
 }
-

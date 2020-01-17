@@ -16,20 +16,17 @@ AFRAME.registerComponent("reach_passage", {
 		attachToWindow: {type: "boolean", default: true}
 		
 	},
+	// init: function() {
+	//
+	// },
 	init: function() {
 		
-	},
-	update: function(oldData) {
-		
-		if (this.head) {
-			this.el.removeChild(this.head);
-			this.head.destroy();
-			this.head = undefined;
-			this.passage.destroy();
-			this.passage = undefined;
+		if (!this.head) {
+			this.head = document.createElement("a-entity");
+			this.el.appendChild(this.head);
 		}
 		
-		this.head = document.createElement("a-entity");
+		
 		var scene = this.head;
 		
 		var twinePassageData = undefined;
@@ -94,6 +91,23 @@ AFRAME.registerComponent("reach_passage", {
 	      scene.appendChild(soundElement);
 	    }
 		
+
+		
+		if (this.data.attachToWindow === true) {
+			// var allBackgrounds = scene.querySelectorAll("a-sky");
+		    if (backgrounds.length === 0) {
+		    	  // var textBlock = getTextInPassage(passage);
+		    	  // var textElement = createPassageText(textBlock, 0, currentPassageTwinePosition);
+		    	  // scene.appendChild(textElement);
+		    	  var defaultSky = getPassageSky({options:{"transparent":false}}, this.passage.name);
+		    	  scene.appendChild(defaultSky);
+		    }
+		}
+
+
+		
+	},
+	update: function(oldData) {
 		var mixPassages = getMixPassages(this.passage);
 		for (var i = 0; i < mixPassages.length; i++) {
 			var mixed = mixPassages[i];
@@ -102,23 +116,13 @@ AFRAME.registerComponent("reach_passage", {
 			}
 			window.traversedPassages[mixed.name] = true;
 			var mixedElement = document.createElement("a-entity");
-			scene.appendChild(mixedElement);
+			this.head.appendChild(mixedElement);
 			var localOptions = mixed.options;
 			localOptions.name = mixed.name;
 			localOptions.hideFromHistory = true;
 			localOptions.attachToWindow = false;
 			mixedElement.setAttribute("reach_passage", localOptions);			
 		}
-
-	    if (backgrounds.length === 0) {
-	    	  // var textBlock = getTextInPassage(passage);
-	    	  // var textElement = createPassageText(textBlock, 0, currentPassageTwinePosition);
-	    	  // scene.appendChild(textElement);
-	    	  var defaultSky = getPassageSky({options:{"transparent":false}}, this.passage.name);
-	    	  scene.appendChild(defaultSky);
-	    }
-
-		this.el.appendChild(this.head);
 	},
 	remove: function () {
 		if (this.head) {

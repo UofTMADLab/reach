@@ -42,12 +42,12 @@ AFRAME.registerComponent("reach_sky", {
 	    this.sky.setAttribute("opacity", this.data.opacity);
 		this.sky.setAttribute("rotation", `${(this.data.inclination) % 12 * 30.0} ${this.data.directionInDegrees === true ? this.data.direction : (this.data.direction % 12) * -30.0} 0`);
 
-	    this.sky.setAttribute("animation", {
-	    	  property: "opacity",
-	    	  to: 1.0,
+				    this.sky.setAttribute("animation", {
+				    	  property: "opacity",
+				    	  to: 1.0,
 			from: 0.0,
-	    	  startEvents: "materialtextureloaded"
-	    });
+				    	  startEvents: "materialtextureloaded"
+				    });
 		
 		
 	},
@@ -59,7 +59,9 @@ AFRAME.registerComponent("reach_sky", {
 			}
 			this.removeEventListeners = [];
 			this.el.removeChild(this.sky);
-			this.sky.destroy();
+			// calling destroy here was deleting the sky geometry globally sometimes
+			// this.sky.destroy();
+			this.sky = undefined;
 		}
 	},
 	
