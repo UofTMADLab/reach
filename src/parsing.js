@@ -21,7 +21,7 @@ function getPassageByName(name) {
 function getLinksInPassage(passage) {
 	// match beginning of text, or options JSON, or any character other than `, then [[text]] or [[text|link]], with optional spaces between
 	// brackets and json/text
-  var rexp = /(^|({\s*(.+)\s*})|[^`])\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+  var rexp = /(^|({\s*(.+)\s*})|[^`&])\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
   var passageText = passage.processedContent;
   var links = [];
   var array1;
@@ -44,7 +44,7 @@ function getLinksInPassage(passage) {
 
 function getImagePanelsInPassage(passage) {
 
-  var rexp = /(^|({\s*(.+)\s*})|[^`])\[img\[(\s*(.+)\s*)\](\s*\]|((.+))\])/g;
+  var rexp = /(^|({\s*(.+)\s*})|[^`&])\[img\[(\s*(.+)\s*)\](\s*\]|((.+))\])/g;
   var passageText = passage.processedContent;
   var images = [];
   var array1;
@@ -90,7 +90,7 @@ function getSoundsInPassage(passage) {
 }
 
 function getTextInPassage(passage) {
-	var rexp = /({\s*.+\s*})?`?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
+	var rexp = /({\s*.+\s*})?`?&?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
 	var passageText = passage.processedContent;
 	return {text: passageText.replace(rexp, ""), options:{direction: 0}};
 }
@@ -131,4 +131,28 @@ function getPanelsInPassage(passage) {
     }
     return links;
 }
-export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage};
+
+function getMixPassages(passage) {
+    var rexp = /({\s*(.+)\s*})?&\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+    var passageText = passage.processedContent;
+    var links = [];
+    var array1;
+    while ((array1 = rexp.exec(passageText)) !== null) {
+      var options = {};
+      if (array1[1]) {
+        options = JSON.parse(array1[1]);
+      }
+      if (array1[4]) {
+		  var newPassageName = array1[5];
+		  var newPassage = getPassageByName(newPassageName);
+		links.push({ name: newPassageName,  options: options, twinePosition: getPassageTwinePosition(newPassage) });
+      } else {
+		  var newPassageName = array1[6];
+		  var newPassage = getPassageByName(newPassageName);
+        links.push({ name: newPassageName,  options: options, twinePosition: getPassageTwinePosition(newPassage) });
+      }
+    }
+    return links;
+}
+
+export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages};

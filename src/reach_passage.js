@@ -1,5 +1,5 @@
 import {REACH_DEFAULT_NULL} from './utility.js';
-import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage} from './parsing.js';
+import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages} from './parsing.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
@@ -12,7 +12,8 @@ AFRAME.registerComponent("reach_passage", {
 		
 		id: {type: "string", default: REACH_DEFAULT_NULL},
 		name: {type: "string", default: REACH_DEFAULT_NULL},
-		hideFromHistory: {type: "boolean", default: false}
+		hideFromHistory: {type: "boolean", default: false},
+		attachToWindow: {type: "boolean", default: true}
 		
 	},
 	init: function() {
@@ -39,7 +40,7 @@ AFRAME.registerComponent("reach_passage", {
 		} 
 		
 		if (twinePassageData) {
-			this.passage = new Passage(twinePassageData, this.head);
+			this.passage = new Passage(twinePassageData, this.head);			
 		} else {
 			console.log(`reach Warning: could not find with name or pid: ${this.data.id}`);
 			return;
@@ -49,8 +50,9 @@ AFRAME.registerComponent("reach_passage", {
 			window.story.history.push(this.passage.id);
 		}
 		
-		window.passage = this.passage;
-		
+		if (this.data.attachToWindow === true) {
+			window.passage = this.passage;
+		}
 		
 	    var processed = window.story.render(this.passage.id);
 	    this.passage.processedContent = processed;
@@ -91,6 +93,22 @@ AFRAME.registerComponent("reach_passage", {
 	      var soundElement = createSoundElement(sound);
 	      scene.appendChild(soundElement);
 	    }
+		
+		var mixPassages = getMixPassages(this.passage);
+		for (var i = 0; i < mixPassages.length; i++) {
+			var mixed = mixPassages[i];
+			if (window.traversedPassages[mixed.name] === true) {
+				continue;
+			}
+			window.traversedPassages[mixed.name] = true;
+			var mixedElement = document.createElement("a-entity");
+			scene.appendChild(mixedElement);
+			var localOptions = mixed.options;
+			localOptions.name = mixed.name;
+			localOptions.hideFromHistory = true;
+			localOptions.attachToWindow = false;
+			mixedElement.setAttribute("reach_passage", localOptions);			
+		}
 
 	    if (backgrounds.length === 0) {
 	    	  // var textBlock = getTextInPassage(passage);

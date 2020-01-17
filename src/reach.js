@@ -156,7 +156,22 @@ AFRAME.registerComponent("reach-load-local", {
 
 			
 					  var scene = document.querySelector("#container");
-					  scene.setAttribute("reach_passage", {id: idOrName, name: idOrName, hideFromHistory: hideFromHistory});
+					  var passagesToEnd = scene.querySelectorAll("[reach_passage]");
+					  for (var i = 0; i < passagesToEnd.length; i++) {
+						  var p = passagesToEnd[i];
+						  p.removeAttribute("reach_passage");
+						  p.remove();
+						  if (p.destroy) {
+							  p.destroy();
+						  }
+					  }
+					  
+					  window.traversedPassages = {};
+					  window.traversedPassages[window.story.passage(idOrName).getAttribute("name")] = true;
+					  
+					  var passageElement = document.createElement("a-entity");
+					  scene.appendChild(passageElement);
+					  passageElement.setAttribute("reach_passage", {id: idOrName, name: idOrName, hideFromHistory: hideFromHistory});
 					  document.querySelector("a-scene").setAttribute("background", "color: black");
 		}
 
