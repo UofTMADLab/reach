@@ -1,6 +1,6 @@
 function getPassageTwinePosition(passage) {
 	if (passage === undefined){
-		console.log(`could not find position of passage with name: ${name}`)
+		// console.log(`could not find position of passage with name: ${name}`)
 		return {x:0, y:0};
 	}
 	var coordString = passage.getAttribute("position");

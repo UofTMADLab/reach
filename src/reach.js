@@ -196,17 +196,23 @@ AFRAME.registerComponent("reach-load-local", {
 			// }
 
 			window.traversedPassages = {};
-			window.traversedPassages[window.story.passage(idOrName).getAttribute("name")] = true;
+			var passage = window.story.passage(idOrName);
+			if (passage !== undefined) {
+				var name = passage.getAttribute("name");
+				if (name !== undefined) {
+					window.traversedPassages[name] = true;
+				}
+			}
+			
 
 			var passageElement = document.createElement("a-entity");
 			scene.appendChild(passageElement);
-
+			
 			passageElement.setAttribute("reach_passage", {
 				id: idOrName,
 				name: idOrName,
 				hideFromHistory: hideFromHistory
 			});
-
 
 			document.querySelector("a-scene").setAttribute("background", "color: black");
 		}

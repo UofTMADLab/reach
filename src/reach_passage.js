@@ -45,13 +45,13 @@ AFRAME.registerComponent("reach_passage", {
 		} else if (this.data.name !== REACH_DEFAULT_NULL) {
 			twinePassageData = window.story.passage(this.data.name);
 		} 
-		
-		if (twinePassageData) {
+		console.twineData = twinePassageData;
+		if (twinePassageData !== undefined) {
 			this.passage = new Passage(twinePassageData, this.head);			
 		} else {
 			var message = `reach: could not find passage with name or pid: ${this.data.id}`;
-			console.log(message);
-			throw message;
+			window.story.showError(message, this.data.id);
+			return;
 			
 		}
 		
@@ -126,6 +126,9 @@ AFRAME.registerComponent("reach_passage", {
 		
 	},
 	update: function(oldData) {
+		if (this.passage === undefined) {
+			return;
+		}
 		var mixPassages = getMixPassages(this.passage);
 		for (var i = 0; i < mixPassages.length; i++) {
 			var mixed = mixPassages[i];
