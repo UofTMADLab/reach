@@ -1,6 +1,6 @@
 import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
 
-AFRAME.registerComponent("reach_text_panel", {
+AFRAME.registerComponent("reach_html_panel", {
 	
 	schema: {
 		
@@ -17,9 +17,9 @@ AFRAME.registerComponent("reach_text_panel", {
 		opacity: {type: "number", default: 0.7},
 		backgroundShape: {type: "string", default: "plane"},
 		img: {type: "string", default: REACH_DEFAULT_NULL},
-		color: {type: "color", default: "#000000"},
+		
 		link: {type: "string", default: REACH_DEFAULT_NULL},
-		arrow: {type: "boolean", default: false},
+		
 		floor: {type: "boolean", default: false},
 		onClick: {
 			type: "string",
@@ -74,10 +74,10 @@ AFRAME.registerComponent("reach_text_panel", {
 		
 			this.removeEventListeners = [];
 			// new cursor events can't be registered on further updates to this component
-			this.registerEvents("onClick", this.background, "click", "reach_text_panel");
-			this.registerEvents("onMouseEnter", this.background, "mouseenter", "reach_text_panel");
-			this.registerEvents("onMouseLeave", this.background, "mouseleave", "reach_text_panel");
-			this.registerEvents("onLoaded", this.el, "loaded", "reach_text_panel", true);
+			this.registerEvents("onClick", this.background, "click", "reach_html_panel");
+			this.registerEvents("onMouseEnter", this.background, "mouseenter", "reach_html_panel");
+			this.registerEvents("onMouseLeave", this.background, "mouseleave", "reach_html_panel");
+			this.registerEvents("onLoaded", this.el, "loaded", "reach_html_panel", true);
 			
 		
 			
@@ -103,7 +103,7 @@ AFRAME.registerComponent("reach_text_panel", {
 		this.background.setAttribute("id", "background");
 		this.background.setAttribute("scale", this.data.scale);
 		
-		if (this.data.floor === false || this.data.arrow === false) {
+		if (this.data.floor === false) {
 			this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
 			if (this.data.img !== REACH_DEFAULT_NULL) {
 				if (this.data.img !== oldData.img || this.data.opacity !== oldData.opacity) {
@@ -136,24 +136,7 @@ AFRAME.registerComponent("reach_text_panel", {
 			);
 		}
 		
-		if (this.data.arrow === true) {
-			if (this.arrow === undefined) {
-				this.arrow = document.createElement("a-entity");	
-				this.background.appendChild(this.arrow);			
-			}
 
-			this.arrow.setAttribute("reach_arrow", {
-				distance: 0.0,
-				yHeight: -1.0 * yHeight,
-				opacity: this.data.opacity,
-				color: this.data.backgroundColor,
-				link: this.data.link
-			});
-
-		} else if (this.data.arrow === false && this.arrow !== undefined) {
-			this.background.removeChild(this.arrow);
-			this.arrow = undefined;
-		}
 		
 		
 
@@ -225,7 +208,7 @@ AFRAME.registerComponent("reach_text_panel", {
 		var options = {};
 		options[name] = value;
 		
-		this.el.setAttribute("reach_text_panel", options);
+		this.el.setAttribute("reach_html_panel", options);
 	},
 	
 	getOption : function(name) {
@@ -238,7 +221,7 @@ AFRAME.registerComponent("reach_text_panel", {
 				this.tickCallback(this, time, timeDelta);
 			} catch (e) {
 				this.tickCallback = undefined;
-				window.story.showError(e, `${window.passage.name}(onTick: reach_text_panel, id: ${this.data.id})`);
+				window.story.showError(e, `${window.passage.name}(onTick: reach_html_panel, id: ${this.data.id})`);
 				return;				
 			}			
 		}

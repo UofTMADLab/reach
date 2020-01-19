@@ -28,6 +28,7 @@ AFRAME.registerComponent("reach_image_panel", {
 			type: "number",
 			default: 2.0
 		},
+		scale: {type: "vec3", default:{x: 1.0, y: 1.0, z: 1.0}},
 		yHeight: {
 			type: "number",
 			default: 1.6
@@ -143,7 +144,7 @@ AFRAME.registerComponent("reach_image_panel", {
 		this.inner.setAttribute("rotation", `${innerRotation} 0 0`);
 
 		this.background.setAttribute("id", "background");
-
+		this.background.setAttribute("scale", this.data.scale);
 
 		this.background.setAttribute("geometry", `primitive: plane;`);
 

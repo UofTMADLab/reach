@@ -1,7 +1,8 @@
-console.log("REACH-1.0.50,52");
+console.log("REACH-1.0.51,53");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
+import './reach_html_panel.js';
 import './reach_image_panel.js';
 import './reach_sound.js';
 import './reach_sky.js';
