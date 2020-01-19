@@ -324,6 +324,27 @@ AFRAME.registerComponent("reach-load-local", {
 		if (window.story.isMobile() === true) {
 			window.story.cursor(true);
 		}
+		
+		document.addEventListener('keydown', (event) => {
+			// filter for ctrl+alt
+			if (!(event.ctrlKey === true && event.altKey === true)) {
+				return;
+			}
+								
+			if (event.key === "d") {
+				if (window.story.hud === undefined) {
+					window.story.lookPosition(true);
+				} else {
+					window.story.lookPosition(false);
+				}
+			} else if (event.key === "p") {
+				if (document.querySelector("a-scene").components.stats === undefined) {
+					window.story.stats(true);
+				} else {
+					window.story.stats(false);
+				}
+			}
+		});
 
 		window.story.start();
 
