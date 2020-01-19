@@ -1,5 +1,5 @@
 import {REACH_DEFAULT_NULL} from './utility.js';
-import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages} from './parsing.js';
+import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage} from './parsing.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
@@ -36,7 +36,7 @@ AFRAME.registerComponent("reach_passage", {
 			this.el.appendChild(this.head);
 		}
 		
-		
+		this.codePassages = [];
 		var scene = this.head;
 		
 		var twinePassageData = undefined;
@@ -45,7 +45,7 @@ AFRAME.registerComponent("reach_passage", {
 		} else if (this.data.name !== REACH_DEFAULT_NULL) {
 			twinePassageData = window.story.passage(this.data.name);
 		} 
-		console.twineData = twinePassageData;
+		
 		if (twinePassageData !== undefined) {
 			this.passage = new Passage(twinePassageData, this.head);			
 		} else {
@@ -84,8 +84,26 @@ AFRAME.registerComponent("reach_passage", {
 	    var links = getLinksInPassage(this.passage);
 	    for (var i = 0; i < links.length; i++) {
 	      var link = links[i];
-	      var linkElement = createPassageLink(link, i, this.passage.position);
-	      scene.appendChild(linkElement);
+		  if (isCodePassage(link.link) === true) {
+			  this.codePassages.push(link);
+		  } else if (isHTMLPassage(link.link) === true) {
+		  } else if (isTextPassage(link.link) === true) {
+
+	  		try {
+				link.text = window.story.render(link.link);
+				link.backgrounds = [];
+				var panelElement = createPassageText(link, i, this.passage.position);
+				scene.appendChild(panelElement);
+			} catch (e) {
+				window.story.showError(e, `${this.passage.name}(loading text passage named: ${link.link})`);
+				return;
+			}
+
+		  } else {
+		      var linkElement = createPassageLink(link, i, this.passage.position);
+		      scene.appendChild(linkElement);
+		  }
+
 	    }
   
 	    var panels = getPanelsInPassage(this.passage);
@@ -128,6 +146,24 @@ AFRAME.registerComponent("reach_passage", {
 	update: function(oldData) {
 		if (this.passage === undefined) {
 			return;
+		}
+		for (var i = 0; i < this.codePassages.length; i++) {
+			var codePassageLink = this.codePassages[i];
+			var twinePassageData = window.story.passage(codePassageLink.link);
+			if (twinePassageData !== undefined) {
+				try {
+					_.template(`<% ${twinePassageData.textContent} %>`)({
+									s: window.story.state,
+									p: window.passage,
+						params: codePassageLink.options
+								});
+				} catch (e) {
+					window.story.showError(e, `${this.passage.name} (error in linked code passage named: ${codePassageLink.link})`)
+				}
+
+			} else {
+				window.story.showError(e, `${this.passage.name}(could not load code passage named: ${codePassageName})`)
+			}
 		}
 		var mixPassages = getMixPassages(this.passage);
 		for (var i = 0; i < mixPassages.length; i++) {

@@ -132,6 +132,23 @@ function getPanelsInPassage(passage) {
     return links;
 }
 
+function isCodePassage(link){
+	var rexp = /%.+%/g;
+	return rexp.exec(link) !== null;
+
+	
+}
+
+function isHTMLPassage(link) {
+	var rexp = /<.+>/g;
+	return rexp.exec(link) !== null;
+}
+
+function isTextPassage(link) {
+	var rexp = /'.+'/g;
+	return rexp.exec(link) !== null;
+}
+
 function getMixPassages(passage) {
     var rexp = /({\s*(.+)\s*})?&\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
     var passageText = passage.processedContent;
@@ -155,4 +172,4 @@ function getMixPassages(passage) {
     return links;
 }
 
-export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages};
+export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage};
