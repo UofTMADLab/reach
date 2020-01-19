@@ -232,7 +232,13 @@ AFRAME.registerComponent("reach_text_panel", {
 	
 	tick: function(time, timeDelta) {
 		if (this.tickCallback !== undefined) {
-			this.tickCallback(this, time, timeDelta);
+			try {
+				this.tickCallback(this, time, timeDelta);
+			} catch (e) {
+				this.tickCallback = undefined;
+				window.story.showError(e, `${window.passage.name}(onTick: reach_text_panel, id: ${this.data.id})`);
+				return;				
+			}			
 		}
 	},
 	

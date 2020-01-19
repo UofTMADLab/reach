@@ -107,7 +107,13 @@ AFRAME.registerComponent("reach_video", {
 	},
 	tick: function(time, timeDelta) {
 		if (this.tickCallback !== undefined) {
-			this.tickCallback(this, time, timeDelta);
+			try {
+				this.tickCallback(this, time, timeDelta);
+			} catch (e) {
+				this.tickCallback = undefined;
+				window.story.showError(e, `${window.passage.name}(onTick: reach_video, id: ${this.data.id})`);
+				return;				
+			}			
 		}
 	},
 	onTick: function(callback) {

@@ -13,7 +13,17 @@ AFRAME.registerComponent("reach_passage", {
 		id: {type: "string", default: REACH_DEFAULT_NULL},
 		name: {type: "string", default: REACH_DEFAULT_NULL},
 		hideFromHistory: {type: "boolean", default: false},
-		attachToWindow: {type: "boolean", default: true}
+		attachToWindow: {type: "boolean", default: true},
+		// params: {
+		// 	default: {},
+		// 	parse: function(value) {
+		// 		return JSON.parse(value);
+		// 	},
+		// 	stringify: function(value) {
+		// 		return JSON.stringify(value);
+		// 	}
+		// }
+		
 		
 	},
 	// init: function() {
@@ -39,8 +49,10 @@ AFRAME.registerComponent("reach_passage", {
 		if (twinePassageData) {
 			this.passage = new Passage(twinePassageData, this.head);			
 		} else {
-			console.log(`reach Warning: could not find with name or pid: ${this.data.id}`);
-			return;
+			var message = `reach: could not find passage with name or pid: ${this.data.id}`;
+			console.log(message);
+			throw message;
+			
 		}
 		
 		if (this.data.hideFromHistory === false) {
@@ -51,7 +63,13 @@ AFRAME.registerComponent("reach_passage", {
 			window.passage = this.passage;
 		}
 		
-	    var processed = window.story.render(this.passage.id);
+		try {
+		    var processed = window.story.render(this.passage.id);
+		} catch (e) {
+			window.story.showError(e, this.passage.name);
+			return;
+		}
+
 	    this.passage.processedContent = processed;
 		
 	    var backgrounds = getBackgroundsInPassage(this.passage);
@@ -121,7 +139,13 @@ AFRAME.registerComponent("reach_passage", {
 			localOptions.name = mixed.name;
 			localOptions.hideFromHistory = true;
 			localOptions.attachToWindow = false;
-			mixedElement.setAttribute("reach_passage", localOptions);			
+			try {
+				mixedElement.setAttribute("reach_passage", localOptions);				
+			} catch (e) {
+				window.story.showError(e, mixed.name);
+				return;
+			}
+			
 		}
 	},
 	remove: function () {

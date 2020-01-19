@@ -129,6 +129,12 @@ AFRAME.registerComponent("reach-load-local", {
 
 		window.passage = {};
 		window.reachMixins = {};
+		
+		
+		window.story.showError = function(error, location) {
+			var message = `reach error (on loading passage named ${location})\n${error}`;
+			console.log(message);
+		}
 
 		window.story.registerMixin = function(id, attributes) {
 			window.reachMixins[id] = attributes;
@@ -194,11 +200,14 @@ AFRAME.registerComponent("reach-load-local", {
 
 			var passageElement = document.createElement("a-entity");
 			scene.appendChild(passageElement);
+
 			passageElement.setAttribute("reach_passage", {
 				id: idOrName,
 				name: idOrName,
 				hideFromHistory: hideFromHistory
 			});
+
+
 			document.querySelector("a-scene").setAttribute("background", "color: black");
 		}
 

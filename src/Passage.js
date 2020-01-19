@@ -168,8 +168,15 @@ Passage.prototype.videos = function() {
 }
 
 Passage.prototype.on = function(eventName, callback) {
+	var name = this.name;
 	var superCallback = function (e) {
-		callback(e.detail.source, e);
+		try {
+			callback(e.detail.source, e);
+		} catch(e) {
+			window.story.showError(e, `${name}(event: ${eventName})`);
+			return;
+		}
+		
 	}
 	this.container.addEventListener(eventName, superCallback);
 }
