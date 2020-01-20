@@ -110,12 +110,22 @@ Passage.prototype.getComponentWithId = function(id, componentType) {
 	}
 }
 
-Passage.prototype.getAllComponentsOfType = function(componentType) {
+Passage.prototype.getAllComponentsOfType = function(componentType, index) {
 	var els = this.container.querySelectorAll(`[${componentType}]`);
 	if (els) {
-		return Array.prototype.map.call(els, function(el) {return el.components[componentType];});
+		if (index === undefined) {
+			return Array.prototype.map.call(els, function(el) {return el.components[componentType];});			
+		} else {
+			return Array.prototype.map.call(els, function(el) {return el.components[componentType];})[index];			
+		}
+
 	} else {
-		return [];
+		if (index === undefined) {
+			return [];
+		} else {
+			return undefined;
+		}
+		
 	}
 }
 
@@ -123,48 +133,56 @@ Passage.prototype.getSky = function(id){
 	return this.getComponentWithId(id, "reach_sky");
 }
 
-Passage.prototype.skies = function() {
-	return this.getAllComponentsOfType("reach_sky");
+Passage.prototype.skies = function(index) {
+	return this.getAllComponentsOfType("reach_sky", index);
 }
 
 Passage.prototype.getImagePanel = function(id) {
 	return this.getComponentWithId(id, "reach_image_panel");
 }
 
-Passage.prototype.imagePanels = function() {
-	return this.getAllComponentsOfType("reach_image_panel");
+Passage.prototype.imagePanels = function(index) {
+	return this.getAllComponentsOfType("reach_image_panel", index);
 }
 
 Passage.prototype.getSound = function(id) {
 	return this.getComponentWithId(id, "reach_sound");
 }
 
-Passage.prototype.sounds = function() {
-	return this.getAllComponentsOfType("reach_sound");
+Passage.prototype.sounds = function(index) {
+	return this.getAllComponentsOfType("reach_sound", index);
 }
 
 Passage.prototype.getTextPanel = function(id) {
 	return this.getComponentWithId(id, "reach_text_panel");
 }
 
-Passage.prototype.textPanels = function() {
-	return this.getAllComponentsOfType("reach_text_panel");
+Passage.prototype.textPanels = function(index) {
+	return this.getAllComponentsOfType("reach_text_panel", index);
+}
+
+Passage.prototype.getHTMLPanel = function(id) {
+	return this.getComponentWithId(id, "reach_html_panel");
+}
+
+Passage.prototype.htmlPanels = function(index) {
+	return this.getAllComponentsOfType("reach_html_panel", index);
 }
 
 Passage.prototype.getLinkPanel = function(id) {
 	return this.getComponentWithId(id, "reach_text_panel");
 }
 
-Passage.prototype.linkPanels = function() {
-	return this.getAllComponentsOfType("reach_text_panel");
+Passage.prototype.linkPanels = function(index) {
+	return this.getAllComponentsOfType("reach_text_panel", index);
 }
 
 Passage.prototype.getVideo = function(id) {
 	return this.getComponentWithId(id, "reach_video");
 }
 
-Passage.prototype.videos = function() {
-	return this.getAllComponentsOfType("reach_video");
+Passage.prototype.videos = function(index) {
+	return this.getAllComponentsOfType("reach_video", index);
 }
 
 Passage.prototype.on = function(eventName, callback) {

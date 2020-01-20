@@ -3,7 +3,7 @@ import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPas
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
-import {createPassageLink, createPassageText} from './link.js';
+import {createPassageLink, createPassageText, createPassageHTML} from './link.js';
 import {Passage} from './Passage.js';
 
 AFRAME.registerComponent("reach_passage", {
@@ -87,6 +87,15 @@ AFRAME.registerComponent("reach_passage", {
 		  if (isCodePassage(link.link) === true) {
 			  this.codePassages.push(link);
 		  } else if (isHTMLPassage(link.link) === true) {
+  	  		try {
+  				link.text = window.story.render(link.link);
+  				link.backgrounds = [];
+  				var panelElement = createPassageHTML(link, i, this.passage.position);
+  				scene.appendChild(panelElement);
+  			} catch (e) {
+  				window.story.showError(e, `${this.passage.name}(loading html passage named: ${link.link})`);
+  				return;
+  			}
 		  } else if (isTextPassage(link.link) === true) {
 
 	  		try {

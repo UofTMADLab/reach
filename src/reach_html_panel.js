@@ -1,5 +1,12 @@
 import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
 
+function CreateUUID() {
+  return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 AFRAME.registerComponent("reach_html_panel", {
 	
 	schema: {
@@ -79,9 +86,31 @@ AFRAME.registerComponent("reach_html_panel", {
 			this.registerEvents("onMouseLeave", this.background, "mouseleave", "reach_html_panel");
 			this.registerEvents("onLoaded", this.el, "loaded", "reach_html_panel", true);
 			
-		
+			this.outerTextureElement = document.createElement("div");
+			
+			this.outerTextureElement.setAttribute("style", "z-index:-1;");
+			
+			this.textureElement = document.createElement("div");
+			this.textureID = "tex" + CreateUUID();
+			this.textureElement.setAttribute("id", this.textureID);
+			
+			window.htmlTextureRendering.appendChild(this.outerTextureElement);
+			this.outerTextureElement.appendChild(this.textureElement);
 			
 			this.el.appendChild(this.head);
+			
+			var self = this;
+			// this.textureElement.addEventListener("onload", (e) => {
+			// 	if (self.background === undefined) {
+			// 		return;
+			// 	}
+			// 	console.log("loaded texture element");
+			// 	self.background.setAttribute("material", `shader: html; target: #${this.textureID}; ratio: height; transparent: true;`);
+			// });
+			//
+			// _.delay(() => {
+			// 	self.background.setAttribute("material", `shader: html; target: #${this.textureID}; ratio: height; transparent: true;`);
+			// }, 2000);
 			
 		}
 
@@ -101,24 +130,31 @@ AFRAME.registerComponent("reach_html_panel", {
 
 		
 		this.background.setAttribute("id", "background");
+		this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
 		this.background.setAttribute("scale", this.data.scale);
 		
-		if (this.data.floor === false) {
-			this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
-			if (this.data.img !== REACH_DEFAULT_NULL) {
-				if (this.data.img !== oldData.img || this.data.opacity !== oldData.opacity) {
-					this.background.setAttribute("material", `shader: flat; opacity: ${this.data.opacity}; src: ${getSrc(this.data.img)}; transparent: true`);
-				}
-
-								
-			} else {
-				this.background.setAttribute("material", `color: ${this.data.backgroundColor}; shader: flat; opacity: ${this.data.opacity}`);
-			}
-			if (this.data.text !== oldData.text || this.data.color !== oldData.color) {
-				this.background.setAttribute("text", `align: center; color: ${this.data.color}; width: 0.85; wrapCount: 18; value: ${this.data.text};`);
-				
-			}
-		}
+		this.outerTextureElement.setAttribute("style", "width: 100%; height: 100%; position: fixed; left: 0; top: 0; overflow: hidden; z-index:-1;");
+		this.textureElement.setAttribute("style", `width: 2000px; font-size: 128px; padding: 100px; color: #000000; text-align: left; background-color:${this.data.backgroundColor};`);
+		
+		this.textureElement.innerHTML = this.data.text;
+		
+		this.background.setAttribute("material", `shader: html; target: #${this.textureID}; ratio: height; transparent: true;`);
+		// if (this.data.floor === false) {
+		// 	this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
+		// 	if (this.data.img !== REACH_DEFAULT_NULL) {
+		// 		if (this.data.img !== oldData.img || this.data.opacity !== oldData.opacity) {
+		// 			this.background.setAttribute("material", `shader: flat; opacity: ${this.data.opacity}; src: ${getSrc(this.data.img)}; transparent: true`);
+		// 		}
+		//
+		//
+		// 	} else {
+		// 		this.background.setAttribute("material", `color: ${this.data.backgroundColor}; shader: flat; opacity: ${this.data.opacity}`);
+		// 	}
+		// 	if (this.data.text !== oldData.text || this.data.color !== oldData.color) {
+		// 		this.background.setAttribute("text", `align: center; color: ${this.data.color}; width: 0.85; wrapCount: 18; value: ${this.data.text};`);
+		//
+		// 	}
+		// }
 
 		if (this.data.link !== REACH_DEFAULT_NULL ||
 			this.data.onClick !== REACH_DEFAULT_NULL ||
@@ -156,6 +192,8 @@ AFRAME.registerComponent("reach_html_panel", {
 			this.outer = undefined;
 			this.inner= undefined;
 			this.background = undefined;
+			this.outerTextureElement.remove();
+			this.outerTextureElement = undefined;
 		}
 	},
 	registerEvents: function(eventNamesKey, sourceEntity, sourceEvent, componentName, once = false) {

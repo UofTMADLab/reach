@@ -1,4 +1,4 @@
-console.log("REACH-1.0.51,53");
+console.log("REACH-1.0.52,53");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -85,6 +85,8 @@ AFRAME.registerComponent("reach-load-local", {
 		document.querySelector("a-scene").setAttribute("raycaster", "objects: .clickable");
 
 
+		window.htmlTextureRendering = document.createElement("div");
+		document.body.appendChild(htmlTextureRendering);
 
 
 		// cursor.setAttribute("cursor", "fuse: true;");
@@ -149,7 +151,7 @@ AFRAME.registerComponent("reach-load-local", {
 			return window.story.passagesByName[idOrName];
 		}
 
-		window.story.render = function(idOrName) {
+		window.story.render = function(idOrName, params) {
 			var passage = window.story.passage(idOrName);
 			if (passage === undefined) {
 				console.log("Error: passage was not found: " + idOrName);
@@ -157,7 +159,8 @@ AFRAME.registerComponent("reach-load-local", {
 			}
 			return _.template(passage.textContent)({
 				s: window.story.state,
-				p: window.passage
+				p: window.passage,
+				params: params
 			});
 		}
 		window.story.show = function(idOrName, hideFromHistory) {

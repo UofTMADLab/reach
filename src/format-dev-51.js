@@ -3,7 +3,7 @@ window.storyFormat({
 	"description": "A new story format for VR walkthroughs.",
 	"image": "icon.svg",
 	"name": "reach",
-	"version": "1.0.51",
+	"version": "1.0.51d",
 	"proofing": false,
 	"license": "MIT",
 	"url": "https://samesimilar.com",
