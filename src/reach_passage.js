@@ -14,15 +14,7 @@ AFRAME.registerComponent("reach_passage", {
 		name: {type: "string", default: REACH_DEFAULT_NULL},
 		hideFromHistory: {type: "boolean", default: false},
 		attachToWindow: {type: "boolean", default: true},
-		// params: {
-		// 	default: {},
-		// 	parse: function(value) {
-		// 		return JSON.parse(value);
-		// 	},
-		// 	stringify: function(value) {
-		// 		return JSON.stringify(value);
-		// 	}
-		// }
+		params: {type: "string", default: "{}"}
 		
 		
 	},
@@ -58,13 +50,13 @@ AFRAME.registerComponent("reach_passage", {
 		if (this.data.hideFromHistory === false) {
 			window.story.history.push(this.passage.id);
 		}
-		
+	
 		if (this.data.attachToWindow === true) {
 			window.passage = this.passage;
 		}
 		
 		try {
-		    var processed = window.story.render(this.passage.id);
+		    var processed = window.story.render(this.passage.id, JSON.parse(this.data.params));
 		} catch (e) {
 			window.story.showError(e, this.passage.name);
 			return;
@@ -88,7 +80,7 @@ AFRAME.registerComponent("reach_passage", {
 			  this.codePassages.push(link);
 		  } else if (isHTMLPassage(link.link) === true) {
   	  		try {
-  				link.text = window.story.render(link.link);
+  				link.text = window.story.render(link.link, link.options);
   				link.backgrounds = [];
   				var panelElement = createPassageHTML(link, i, this.passage.position);
   				scene.appendChild(panelElement);
@@ -99,7 +91,7 @@ AFRAME.registerComponent("reach_passage", {
 		  } else if (isTextPassage(link.link) === true) {
 
 	  		try {
-				link.text = window.story.render(link.link);
+				link.text = window.story.render(link.link, link.options);
 				link.backgrounds = [];
 				var panelElement = createPassageText(link, i, this.passage.position);
 				scene.appendChild(panelElement);
@@ -187,6 +179,7 @@ AFRAME.registerComponent("reach_passage", {
 			localOptions.name = mixed.name;
 			localOptions.hideFromHistory = true;
 			localOptions.attachToWindow = false;
+			localOptions.params = JSON.stringify(mixed.options);
 			try {
 				mixedElement.setAttribute("reach_passage", localOptions);				
 			} catch (e) {
