@@ -2,7 +2,7 @@
 
 const _fs = require('fs');
 const _path = require('path');
-const version = "1.0.52";
+const version = "1.0.55";
 console.log("Making package")
 
 try {
@@ -19,7 +19,7 @@ try {
 	
 	var versionAdded = formatCode.replace("{{REACH_VERSION}}", version);
 	var codeAdded = versionAdded.replace("{{REACH_CODE}}", function() {return escaped});
-	var imageAdded = codeAdded.replace("{{REACH_DEFAULT_360}}", default360);
+	var imageAdded = codeAdded.replace("{{REACH_DEFAULT_360}}", function() {return default360});
 	
 	
 
