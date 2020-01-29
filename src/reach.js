@@ -1,4 +1,4 @@
-console.log("REACH-1.0.53,53");
+console.log("REACH-1.0.57,57");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -126,7 +126,8 @@ AFRAME.registerComponent("reach-load-local", {
 			passages: passagesByID,
 			passagesByName: passagesByName,
 			currentCursor: undefined,
-			hud: undefined
+			hud: undefined,
+			defaultFarClipping: 1000
 
 		}
 

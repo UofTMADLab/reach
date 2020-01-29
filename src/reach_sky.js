@@ -1,10 +1,10 @@
-import {REACH_DEFAULT_NULL, getSrc} from './utility.js';
+import {REACH_DEFAULT_NULL, REACH_DEFAULT_NULL_NUMBER, getSrc} from './utility.js';
 
 AFRAME.registerComponent("reach_sky", {
 	
 	schema: {
 		id: {type: "string", default: REACH_DEFAULT_NULL},
-		distance: {type: "number", default: 5000.0},
+		distance: {type: "number", default: REACH_DEFAULT_NULL_NUMBER},
 		direction: {type: "number", default: 0.0},
 		directionInDegrees: {type: "boolean", default: false},
 		inclination: {type: "number", default: 0.0},
@@ -38,7 +38,7 @@ AFRAME.registerComponent("reach_sky", {
 		}
 		
 	    this.sky.setAttribute("transparent", this.data.transparent);
-	    this.sky.setAttribute("radius", this.data.distance);
+	    this.sky.setAttribute("radius", this.data.distance === REACH_DEFAULT_NULL_NUMBER ? window.story.defaultFarClipping - 1 : this.data.distance);
 	    this.sky.setAttribute("opacity", this.data.opacity);
 		this.sky.setAttribute("rotation", `${(this.data.inclination) % 12 * 30.0} ${this.data.directionInDegrees === true ? this.data.direction : (this.data.direction % 12) * -30.0} 0`);
 
