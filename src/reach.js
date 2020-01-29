@@ -350,17 +350,25 @@ AFRAME.registerComponent("reach-load-local", {
 				return;
 			}
 								
-			if (event.key === "d") {
+			if (event.code === "KeyD") {
 				if (window.story.hud === undefined) {
 					window.story.lookPosition(true);
+					window.story.cursor(true);
 				} else {
 					window.story.lookPosition(false);
+					window.story.cursor(false);
 				}
-			} else if (event.key === "p") {
+			} else if (event.code === "KeyP") {
 				if (document.querySelector("a-scene").components.stats === undefined) {
 					window.story.stats(true);
 				} else {
 					window.story.stats(false);
+				}
+			} else if (event.code === "KeyC") {
+				if (window.story.currentCursor === undefined) {
+					window.story.cursor(true);
+				} else {
+					window.story.cursor(false);
 				}
 			}
 		});
