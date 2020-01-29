@@ -153,6 +153,9 @@ AFRAME.registerComponent("reach_passage", {
 			var twinePassageData = window.story.passage(codePassageLink.link);
 			if (twinePassageData !== undefined) {
 				try {
+					if (twinePassageData.textContent === "Double-click this passage to edit it.") {
+						throw "The passage does not contain JavaScript code.";
+					}
 					_.template(`<% ${twinePassageData.textContent} %>`)({
 									s: window.story.state,
 									p: window.passage,
@@ -163,7 +166,7 @@ AFRAME.registerComponent("reach_passage", {
 				}
 
 			} else {
-				window.story.showError(e, `${this.passage.name}(could not load code passage named: ${codePassageName})`)
+				window.story.showError("", `${this.passage.name}(could not load code passage named: ${codePassageName})`)
 			}
 		}
 		var mixPassages = getMixPassages(this.passage);

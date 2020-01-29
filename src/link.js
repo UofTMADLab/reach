@@ -250,6 +250,7 @@ function createPassageHTML(text, textIndex, currentPassageTwinePosition) {
 		img: text.options.img,
 		text: text.text,
 		link: text.options.link,
+		debugCanvas: text.options.debugCanvas,
 		onMouseEnter: text.options.onMouseEnter,
 		onMouseLeave: text.options.onMouseLeave,
 		onClick: text.options.onClick,

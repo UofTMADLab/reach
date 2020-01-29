@@ -24,6 +24,7 @@ AFRAME.registerComponent("reach_html_panel", {
 		opacity: {type: "number", default: 0.7},
 		backgroundShape: {type: "string", default: "plane"},
 		img: {type: "string", default: REACH_DEFAULT_NULL},
+		debugCanvas: {type: "boolean", default: false},
 		
 		link: {type: "string", default: REACH_DEFAULT_NULL},
 		
@@ -88,6 +89,10 @@ AFRAME.registerComponent("reach_html_panel", {
 			
 			this.outerTextureElement = document.createElement("div");
 			
+
+
+			
+			
 			this.outerTextureElement.setAttribute("style", "z-index:-1;");
 			
 			this.textureElement = document.createElement("div");
@@ -99,7 +104,17 @@ AFRAME.registerComponent("reach_html_panel", {
 			
 			this.el.appendChild(this.head);
 			
-			var self = this;
+			if (this.data.debugCanvas === true){
+				this.debugElement = document.createElement("div");
+				this.debugTextureID = this.textureID + "_debug";
+				this.debugElement.setAttribute("id", this.debugTextureID);
+				window.htmlTextureRendering.appendChild(this.debugElement);
+			}
+			
+
+			
+			// var self = this;
+
 			// this.textureElement.addEventListener("onload", (e) => {
 			// 	if (self.background === undefined) {
 			// 		return;
@@ -137,8 +152,26 @@ AFRAME.registerComponent("reach_html_panel", {
 		this.textureElement.setAttribute("style", `width: 2000px; font-size: 128px; padding: 100px; color: #000000; text-align: left; background-color:${this.data.backgroundColor};`);
 		
 		this.textureElement.innerHTML = this.data.text;
+
 		
-		this.background.setAttribute("material", `shader: html; target: #${this.textureID}; ratio: height; transparent: true;`);
+		var textureID = this.textureID;
+		var background = this.background;
+		var debugTextureID = this.debugTextureID;
+		if (this.debugTextureID !== undefined) {
+			background.setAttribute("material", `shader: html; target: #${textureID}; ratio: height; transparent: true; debug: #${debugTextureID}; fps: 0.5;`);
+			
+		} else {
+			background.setAttribute("material", `shader: html; target: #${textureID}; ratio: height; transparent: true; `);
+		}
+
+
+		
+		
+		// window.setTimeout(() => {
+		// 	console.log("rendered");
+		//
+		// }, 3000);
+		
 		// if (this.data.floor === false) {
 		// 	this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
 		// 	if (this.data.img !== REACH_DEFAULT_NULL) {
@@ -194,6 +227,10 @@ AFRAME.registerComponent("reach_html_panel", {
 			this.background = undefined;
 			this.outerTextureElement.remove();
 			this.outerTextureElement = undefined;
+			if (this.debugElement !== undefined) {
+				this.debugELement.remove();
+				this.debugElement = undefined;
+			}
 		}
 	},
 	registerEvents: function(eventNamesKey, sourceEntity, sourceEvent, componentName, once = false) {
@@ -265,6 +302,9 @@ AFRAME.registerComponent("reach_html_panel", {
 		}
 	},
 	
+	render: function() {
+		this.background.components.material.shader.__render();
+	}
 	// tick: function(time, timeDelta) {
 	//
 	// },

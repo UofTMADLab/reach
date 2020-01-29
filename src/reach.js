@@ -1,4 +1,4 @@
-console.log("REACH-1.0.57,57");
+console.log("REACH-1.0.57,58");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -155,7 +155,7 @@ AFRAME.registerComponent("reach-load-local", {
 		window.story.render = function(idOrName, params) {
 			var passage = window.story.passage(idOrName);
 			if (passage === undefined) {
-				console.log("Error: passage was not found: " + idOrName);
+				window.story.showError("", "Error: passage was not found: " + idOrName);
 				return;
 			}
 			return _.template(passage.textContent)({
