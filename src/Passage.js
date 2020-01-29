@@ -1,5 +1,5 @@
 import {getPassageTwinePosition} from './parsing.js';
-import {createPassageLink, createPassageText} from './link.js';
+import {createPassageLink, createPassageText, createPassageHTML} from './link.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
@@ -68,6 +68,12 @@ Passage.prototype.textPanel = function(text, options) {
 	var newPanel = createPassageText({text: text, options: (options ? options : {})}, -1);
 	this.deferIfNecessary(function() {this.container.appendChild(newPanel);});
 	return newPanel.components.reach_text_panel;
+}
+
+Passage.prototype.htmlPanel = function(html, options) {
+	var newPanel = createPassageHTML({text: html, options: (options ? options : {})}, -1);
+	this.deferIfNecessary(function() {this.container.appendChild(newPanel);});
+	return newPanel.components.reach_html_panel;
 }
 
 Passage.prototype.linkPanel = function(text, link, options) {
