@@ -21,7 +21,7 @@ function getPassageByName(name) {
 function getLinksInPassage(passage) {
 	// match beginning of text, or options JSON, or any character other than `, then [[text]] or [[text|link]], with optional spaces between
 	// brackets and json/text
-  var rexp = /(^|({\s*(.+)\s*})|[^`&])\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+  var rexp = /(^|({\s*(.+)\s*})|[^`&])\[;?\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
   var passageText = passage.processedContent;
   var links = [];
   var array1;
@@ -150,7 +150,7 @@ function isTextPassage(link) {
 }
 
 function getMixPassages(passage) {
-    var rexp = /({\s*(.+)\s*})?&\[\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
+    var rexp = /({\s*(.+)\s*})?&\[;?\[\s*((.+)\s*\|\s*(.+)\s*|(.+)\s*)\]\]/g;
     var passageText = passage.processedContent;
     var links = [];
     var array1;

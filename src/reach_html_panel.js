@@ -228,7 +228,7 @@ AFRAME.registerComponent("reach_html_panel", {
 			this.outerTextureElement.remove();
 			this.outerTextureElement = undefined;
 			if (this.debugElement !== undefined) {
-				this.debugELement.remove();
+				this.debugElement.remove();
 				this.debugElement = undefined;
 			}
 		}
