@@ -1,4 +1,4 @@
-import {getPassageTwinePosition} from './parsing.js';
+import {getPassageTwinePosition, isCodePassage, isHTMLPassage, isTextPassage} from './parsing.js';
 import {createPassageLink, createPassageText, createPassageHTML} from './link.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
@@ -203,6 +203,68 @@ Passage.prototype.on = function(eventName, callback) {
 		
 	}
 	this.container.addEventListener(eventName, superCallback);
+}
+
+// load a %code%, <html>, 'text' or regular passage and mix it into the current one
+Passage.prototype.load = function(passageName, params) {
+	params = params === undefined ? {} : params;
+	var passage =  window.story.passage(passageName);
+	if (passage === undefined) {
+		throw `Passage.load: Could not find passage named ${passageName}`;
+	}
+	
+  if (isCodePassage(passageName) === true) {
+	try {
+		if (passage.textContent === "Double-click this passage to edit it.") {
+			throw "The passage does not contain JavaScript code.";
+		}
+		
+		_.template(`<% ${passage.textContent} %>`)({
+						s: window.story.state,
+						p: window.passage,
+			params: params
+					});
+					return;
+	} catch (e) {
+		window.story.showError(e, `${this.name} (error in linked code passage named: ${passageName})`)
+	}
+	  
+  } else if (isHTMLPassage(passageName) === true) {
+  		try {
+			var link = {link: passageName, text: window.story.render(passageName, params), backgrounds: [], options: params, twinePosition: getPassageTwinePosition(passage)};
+			var panelElement = createPassageHTML(link, 0, this.position);
+			this.container.appendChild(panelElement);
+			return;
+		} catch (e) {
+			throw `${this.name}(loading html passage named: ${passageName})`;
+			return;
+		}
+	} else if (isTextPassage(passageName) === true) {
+
+  		try {
+			var link = {link: passageName, text: window.story.render(passageName, params), backgrounds: [], options: params, twinePosition: getPassageTwinePosition(passage)};
+			var panelElement = createPassageText(link, 0, this.position);
+			this.container.appendChild(panelElement);
+			return;
+		} catch (e) {
+			throw `${this.name}(loading text passage named: ${passageName})`;		
+		}
+
+	} else {
+		var mixedElement = document.createElement("a-entity");
+		this.container.appendChild(mixedElement);
+		var localOptions = params;
+		localOptions.name = passageName;
+		localOptions.hideFromHistory = true;
+		localOptions.attachToWindow = false;
+		localOptions.params = JSON.stringify(params);
+		try {
+			mixedElement.setAttribute("reach_passage", localOptions);				
+		} catch (e) {
+			throw `${this.name}(loading passage named: ${passageName})`;		
+		}
+	}
+	
 }
 
 // Passage.prototype.fireOnReady = function() {
