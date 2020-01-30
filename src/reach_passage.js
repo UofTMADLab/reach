@@ -1,4 +1,4 @@
-import {REACH_DEFAULT_NULL} from './utility.js';
+import {REACH_DEFAULT_NULL, getDirectionBetweenPassages} from './utility.js';
 import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage} from './parsing.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
@@ -156,10 +156,12 @@ AFRAME.registerComponent("reach_passage", {
 					if (twinePassageData.textContent === "Double-click this passage to edit it.") {
 						throw "The passage does not contain JavaScript code.";
 					}
+					var codePassageParams = codePassageLink.options;
+					codePassageParams.twineDirection =  getDirectionBetweenPassages(this.passage.position, codePassageLink.twinePosition) / 360.0 * -12.0;
 					_.template(`<% ${twinePassageData.textContent} %>`)({
 									s: window.story.state,
 									p: window.passage,
-						params: codePassageLink.options
+						params: codePassageParams
 								});
 				} catch (e) {
 					window.story.showError(e, `${this.passage.name} (error in linked code passage named: ${codePassageLink.link})`)
