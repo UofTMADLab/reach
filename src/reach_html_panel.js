@@ -16,7 +16,7 @@ AFRAME.registerComponent("reach_html_panel", {
 		directionInDegrees: {type: "boolean", default: false},
 		inclination: {type: "number", default: 0.0},
 		distance: {type: "number", default: 2.0},
-		scale: {type: "vec3", default:{x: 1.0, y: 1.0, z: 1.0}},
+		scale: {type: "vec2", default:{x: 1.0, y: 1.0}},
 		yHeight: {type: "number", default: 1.6},
 		backgroundSize: {type: "vec2", default: {x:1.5, y:1.5 / 8.5 * 11.0}},
 		text:{type: "string", default: ""},
@@ -146,7 +146,7 @@ AFRAME.registerComponent("reach_html_panel", {
 		
 		this.background.setAttribute("id", "background");
 		this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
-		this.background.setAttribute("scale", this.data.scale);
+		this.background.setAttribute("scale", {x: this.data.scale.x, y: this.data.scale.y, z: 1.0});
 		
 		this.outerTextureElement.setAttribute("style", "width: 100%; height: 100%; position: fixed; left: 0; top: 0; overflow: hidden; z-index:-1;");
 		this.textureElement.setAttribute("style", `width: 2000px; font-size: 128px; padding: 100px; color: #000000; text-align: left; background-color:${this.data.backgroundColor};`);

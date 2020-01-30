@@ -9,7 +9,7 @@ AFRAME.registerComponent("reach_text_panel", {
 		directionInDegrees: {type: "boolean", default: false},
 		inclination: {type: "number", default: 0.0},
 		distance: {type: "number", default: 2.0},
-		scale: {type: "vec3", default:{x: 1.0, y: 1.0, z: 1.0}},
+		scale: {type: "vec2", default:{x: 1.0, y: 1.0}},
 		yHeight: {type: "number", default: 1.6},
 		backgroundSize: {type: "vec2", default: {x:1.5, y:1.5 / 8.5 * 11.0}},
 		text:{type: "string", default: ""},
@@ -101,7 +101,7 @@ AFRAME.registerComponent("reach_text_panel", {
 
 		
 		this.background.setAttribute("id", "background");
-		this.background.setAttribute("scale", this.data.scale);
+		this.background.setAttribute("scale",  {x: this.data.scale.x, y: this.data.scale.y, z: 1.0});
 		
 		if (this.data.floor === false || this.data.arrow === false) {
 			this.background.setAttribute("geometry", `primitive: ${this.data.backgroundShape}; width: ${this.data.backgroundSize.x}; height: ${this.data.backgroundSize.y}`);
