@@ -304,7 +304,11 @@ AFRAME.registerComponent("reach_html_panel", {
 	
 	render: function() {
 		this.background.components.material.shader.__render();
-	}
+	},
+	
+	eventTargetElement: function() {
+		return this.head;
+	},
 	// tick: function(time, timeDelta) {
 	//
 	// },

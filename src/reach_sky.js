@@ -149,6 +149,9 @@ AFRAME.registerComponent("reach_sky", {
 	
 	getOption : function(name) {
 		return this.data[name];
-	}
+	},
+	eventTargetElement: function() {
+		return this.sky;
+	},
 	
 });

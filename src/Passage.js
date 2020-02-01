@@ -191,18 +191,20 @@ Passage.prototype.videos = function(index) {
 	return this.getAllComponentsOfType("reach_video", index);
 }
 
-Passage.prototype.on = function(eventName, callback) {
+Passage.prototype.on = function(eventName, callback, target) {
 	var name = this.name;
+	var self = this;
 	var superCallback = function (e) {
 		try {
-			callback(e.detail.source, e);
+			callback(e.detail.source, e, self);
 		} catch(e) {
 			window.story.showError(e, `${name}(event: ${eventName})`);
 			return;
 		}
 		
 	}
-	this.container.addEventListener(eventName, superCallback);
+	var eventTarget = target === undefined ? this.container : target.eventTargetElement();
+	eventTarget.addEventListener(eventName, superCallback);
 }
 
 // load a %code%, <html>, 'text' or regular passage and mix it into the current one

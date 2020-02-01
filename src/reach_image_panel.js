@@ -264,6 +264,10 @@ AFRAME.registerComponent("reach_image_panel", {
 			}			
 		}
 	},
+	
+	eventTargetElement: function() {
+		return this.head;
+	},
 	// tock: function(time, timeDelta, camera) {
 	//
 	// },

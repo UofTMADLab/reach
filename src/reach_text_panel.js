@@ -249,6 +249,11 @@ AFRAME.registerComponent("reach_text_panel", {
 			}			
 		}
 	},
+
+	
+	eventTargetElement: function() {
+		return this.head;
+	},
 	
 	// tick: function(time, timeDelta) {
 	//

@@ -135,7 +135,11 @@ AFRAME.registerComponent("reach_video", {
 	
 	getOption : function(name) {
 		return this.data[name];
-	}
+	},
+	eventTargetElement: function() {
+		return this.sky;
+	},
+	
 	
 	// tick: function(time, timeDelta) {
 	//

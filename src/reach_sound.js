@@ -84,6 +84,9 @@ AFRAME.registerComponent("reach_sound", {
 	stopSound: function() {
 		this.soundElement.components.sound.stopSound();
 	},
+	eventTargetElement: function() {
+		return this.head;
+	},
 	// updateSchema: function(newData) {
 	//
 	// },
