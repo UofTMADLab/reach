@@ -115,7 +115,13 @@ AFRAME.registerComponent("reach_text_panel", {
 				this.background.setAttribute("material", `color: ${this.data.backgroundColor}; shader: flat; opacity: ${this.data.opacity}`);
 			}
 			if (this.data.text !== oldData.text || this.data.color !== oldData.color) {
-				this.background.setAttribute("text", `align: center; color: ${this.data.color}; width: 0.85; wrapCount: 18; value: ${this.data.text};`);
+				this.background.setAttribute("text", {
+					align: "center",
+					color: this.data.color,
+					width: 0.85,
+					wrapCount: 18,
+					value: this.data.text
+				})
 				
 			}
 		}
