@@ -161,7 +161,7 @@ AFRAME.registerComponent("reach_html_panel", {
 			background.setAttribute("material", `shader: html; target: #${textureID}; ratio: height; transparent: true; debug: #${debugTextureID}; fps: 0.5;`);
 			
 		} else {
-			background.setAttribute("material", `shader: html; target: #${textureID}; ratio: height; transparent: true; `);
+			background.setAttribute("material", `shader: html; target: #${textureID}; ratio: height; transparent: true; fps: 0.5; `);
 		}
 
 
