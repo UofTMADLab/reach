@@ -14,8 +14,9 @@ AFRAME.registerComponent("reach_passage", {
 		name: {type: "string", default: REACH_DEFAULT_NULL},
 		hideFromHistory: {type: "boolean", default: false},
 		attachToWindow: {type: "boolean", default: true},
-		params: {type: "string", default: "{}"}
-		
+		params: {type: "string", default: "{}"},
+		//private
+		ready: {type: "boolean", default: false}
 		
 	},
 	// init: function() {
@@ -54,6 +55,14 @@ AFRAME.registerComponent("reach_passage", {
 		if (this.data.attachToWindow === true) {
 			window.passage = this.passage;
 		}
+		
+		// trick to ensure that scripts linked to this passage are run after it is loaded
+		var self = this;
+		this.passage.onReady(()=> {
+			if (self.data.ready === false) {
+				self.setOption("ready", true);
+			}			
+		})
 		
 		try {
 		    var processed = window.story.render(this.passage.id, JSON.parse(this.data.params));
@@ -148,6 +157,9 @@ AFRAME.registerComponent("reach_passage", {
 		if (this.passage === undefined) {
 			return;
 		}
+		if (this.data.ready === false) {
+			return;
+		}
 		for (var i = 0; i < this.codePassages.length; i++) {
 			var codePassageLink = this.codePassages[i];
 			var twinePassageData = window.story.passage(codePassageLink.link);
@@ -202,6 +214,16 @@ AFRAME.registerComponent("reach_passage", {
 			this.passage.destroy();
 			this.passage = undefined;
 		}
+	},
+	setOption : function(name, value) {
+		var options = {};
+		options[name] = value;
+		
+		this.el.setAttribute("reach_passage", options);
+	},
+	
+	getOption : function(name) {
+		return this.data[name];
 	},
 	
 	// tick: function(time, timeDelta) {
