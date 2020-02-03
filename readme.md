@@ -192,12 +192,12 @@ You can use JavaScript to play a sound when a certain event occurs.  (See follow
 ```javascript
 <% // load the sound %>
 {"autoplay": false, "loop": false}~~https://link_to_mp3_file~~
-<% // load the image; the image will emit the 'PlaySound' event when it is clicked %> 
-{"onClick": "PlaySound"}[img[http://link_to_image_file]]
+<% // load the image; the image will emit the 'PlaySound0' event when it is clicked %> 
+{"onClick": "PlaySound0"}[img[http://link_to_image_file]]
                              
 <%
-// Respond to the PlaySound event channel:
-p.on("PlaySound", function(source) {
+// Respond to the PlaySound0 event channel:
+p.on("PlaySound0", function(source) {
   // This function is called whenever an object (source) emits a PlaySound event.
   
   p.sounds(0).playSound(); // play the first sound in the scene
