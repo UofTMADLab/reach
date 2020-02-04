@@ -59,6 +59,37 @@ function getImagePanelsInPassage(passage) {
   return images;
 }
 
+function getExternalFunctionsInPassage(passage) {
+	var rexp = /(^|({\s*(.+)\s*})|[^`&])\[\s*(.+)\s*\[(|\s*(.+)\s*)\](\s*\]|((.+))\])/g;
+	var passageText = passage.processedContent;
+	var exts = [];
+	var array1;
+	while ((array1 = rexp.exec(passageText)) !== null) {
+		var options = {};
+		if (array1[2]) {
+			options = JSON.parse(array1[2]);
+		};
+		if (array1[4] === "img") {
+			// this regex will also pick up built-in 'img' codes ; skips these;
+			continue;
+		}
+		if (array1[4] === ";") {
+			// also skip ;
+			continue;
+		}
+		var nsPath = window.story.parsePassageName(array1[4]).parts;
+		var extName = nsPath.pop();
+		nsPath.push(`%${extName}%`);
+		
+		options.codeName = extName;
+		options.nsPath = nsPath.join(".");
+		options.parameter1 = array1[5];
+		options.parameter2 = array1[8];
+		exts.push(options);
+	}
+	return exts;
+}
+
 function getBackgroundsInPassage(passage) {
   // var rexp = /\(\((.+)\)\)/g;
   var rexp = /({\s*(.+)\s*})?\(\(\s*(.+)\s*\)\)/g;
@@ -172,4 +203,4 @@ function getMixPassages(passage) {
     return links;
 }
 
-export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage};
+export {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage, getExternalFunctionsInPassage};

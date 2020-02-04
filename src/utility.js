@@ -93,7 +93,14 @@ function mergeMixins(mixins, local, defaultValues = {}) {
 	return result;
 }
 
+function CreateUUID() {
+  return 'xxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 const REACH_DEFAULT_NULL = "reach_default_null_754";
 const REACH_DEFAULT_NULL_NUMBER = -9999;
 
-export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL,REACH_DEFAULT_NULL_NUMBER, mergeMixins};
+export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL,REACH_DEFAULT_NULL_NUMBER, mergeMixins, CreateUUID};

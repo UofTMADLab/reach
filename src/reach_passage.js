@@ -1,5 +1,5 @@
 import {REACH_DEFAULT_NULL, getDirectionBetweenPassages} from './utility.js';
-import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage} from './parsing.js';
+import {getPassageTwinePosition, getPassageById, getPassageByName, getLinksInPassage, getBackgroundsInPassage, getSoundsInPassage, getTextInPassage, getPanelsInPassage, getImagePanelsInPassage, getMixPassages, isCodePassage, isHTMLPassage, isTextPassage, getExternalFunctionsInPassage} from './parsing.js';
 import {getPassageSky} from './sky.js';
 import {getImagePanel} from './image.js';
 import {createSoundElement} from './sound.js';
@@ -115,6 +115,34 @@ AFRAME.registerComponent("reach_passage", {
 		  }
 
 	    }
+		
+		// load custom codes from extension like [myCode[option1]option2]
+		var extFunctions = getExternalFunctionsInPassage(this.passage);
+		for (var i = 0; i < extFunctions.length; i++) {
+			var ext = extFunctions[i];			
+			var extPassagePath = ext.nsPath;
+			var twinePassageData = window.story.passage(extPassagePath, window.story, true);
+			if (twinePassageData !== undefined) {
+				try {
+					if (twinePassageData.textContent === "Double-click this passage to edit it.") {
+						throw "The passage does not contain JavaScript code.";
+					}
+					
+					_.template(`<% ${twinePassageData.textContent} %>`)({
+									s: twinePassageData.s,
+									p: window.passage,
+						params: ext
+								});
+				} catch (e) {
+					window.story.showError(e, `${this.passage.name} (error in linked code passage named: ${extPassagePath})`)
+				}
+
+			} else {
+				window.story.showError("", `${this.passage.name}(could not load code passage named: ${extPassagePath})`)
+			}
+		}
+			 
+		
   
 	    var panels = getPanelsInPassage(this.passage);
 	    for (var i = 0; i < panels.length; i++) {
