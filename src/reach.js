@@ -1,4 +1,4 @@
-console.log("REACH-1.0.57,58");
+console.log("REACH-1.0.60,60");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -9,14 +9,13 @@ import './reach_sky.js';
 import './reach_video.js';
 import './arrow.js';
 import {
-	getSrc, CreateUUID
+	getSrc,
+	CreateUUID
 } from './utility.js';
 
 
 var storyDocument;
 var startnode;
-
-
 
 AFRAME.registerComponent("reach_passage_link", {
 	schema: {
@@ -134,8 +133,8 @@ AFRAME.registerComponent("reach-load-local", {
 
 		window.passage = {};
 		window.reachMixins = {};
-		
-		
+
+
 		window.story.showError = function(error, location) {
 			var message = `reach error (on loading passage named ${location})\n${error}`;
 			console.log(message);
@@ -150,22 +149,25 @@ AFRAME.registerComponent("reach-load-local", {
 				return;
 			}
 			var story = module !== undefined ? module : window.story;
-			
+
 			// only parse out '.' characters if we are searching for a custom external code name, otherwise treat them as part of the passage name
-			
-			var parsedName = search === true ? window.story.parsePassageName(idOrName) : {parts: [idOrName], name: idOrName};
-			
+
+			var parsedName = search === true ? window.story.parsePassageName(idOrName) : {
+				parts: [idOrName],
+				name: idOrName
+			};
+
 			// if namespace not specified
 			if (parsedName.parts.length === 1) {
 				if (story.passages[parsedName.name] != undefined) {
 					var passage = story.passages[parsedName.name];
 					// provide local state
-					passage.s = story.state;
+					passage.s = story;
 					return passage;
 				}
 				if (story.passagesByName[parsedName.name] !== undefined) {
 					var passage = story.passagesByName[parsedName.name];
-					passage.s = story.state;
+					passage.s = story;
 					return passage;
 				}
 				// recursively search imported extensions
@@ -185,21 +187,24 @@ AFRAME.registerComponent("reach-load-local", {
 					return;
 				}
 				return window.story.passage(parts.join('.'), story);
-				
+
 			}
 		}
 
 		window.story.parsePassageName = function(path) {
 			console.log(`path: ${typeof path}`);
 			var nameParts = path.split('.');
-			return {parts: nameParts, name: nameParts[nameParts.length - 1]};
+			return {
+				parts: nameParts,
+				name: nameParts[nameParts.length - 1]
+			};
 		}
-		window.story.render = function(idOrName, params) {		
+		window.story.render = function(idOrName, params) {
 			if (idOrName === undefined) {
 				return;
 			}
 
-//todo: if this is called from an imported module, it should start looking within that module
+			//todo: if this is called from an imported module, it should start looking within that module
 			var passage = window.story.passage(idOrName);
 			if (passage === undefined) {
 				window.story.showError("", "Error: passage was not found: " + idOrName);
@@ -255,11 +260,11 @@ AFRAME.registerComponent("reach-load-local", {
 					window.traversedPassages[name] = true;
 				}
 			}
-			
+
 
 			var passageElement = document.createElement("a-entity");
 			scene.appendChild(passageElement);
-			
+
 			passageElement.setAttribute("reach_passage", {
 				id: idOrName,
 				name: idOrName,
@@ -344,21 +349,27 @@ AFRAME.registerComponent("reach-load-local", {
 
 		window.story.headsetConnected = function() {
 			return AFRAME.utils.device.checkHeadsetConnected();
-		}		
-		
+		}
+
 		// only call import from the "Story Javscript" code (not passage javascript code)
 		window.story.import = function(src, moduleName) {
-			if (window.story.pendingImports === undefined) {
-				window.story.pendingImports = {};
+				var context = this;
+				if (window.story.pendingImports === undefined) {
+					window.story.pendingImports = {};
+				}
+				var key = CreateUUID();
+				window.story.pendingImports[key] = {
+					src: src,
+					moduleName: moduleName,
+					context: context
+				};
+			},
+			window.story.finishedImport = function(uuidKey) {
+				delete window.story.pendingImports[uuidKey];
+				if (Object.keys(window.story.pendingImports).length === 0) {
+					window.story.start();
+				}
 			}
-			window.story.pendingImports[CreateUUID()] = {src: src, moduleName: moduleName, context: this};
-		}
-		window.story.finishedImport = function(uuidKey) {
-			delete window.story.pendingImports[uuidKey];
-			if (Object.keys(window.story.pendingImports).length === 0) {
-				window.story.start();
-			}
-		}
 		window.story.doImport = function(src, moduleName, context, uuidKey) {
 			if (src === undefined || moduleName === undefined) {
 				return;
@@ -367,6 +378,7 @@ AFRAME.registerComponent("reach-load-local", {
 			request.open('GET', src);
 			request.responseType = "document";
 			request.overrideMimeType('text/html');
+
 			var self = context;
 			request.onload = function() {
 				if (request.readyState === request.DONE && request.status === 200) {
@@ -386,7 +398,7 @@ AFRAME.registerComponent("reach-load-local", {
 							passagesByName[name] = passagesArray[i];
 						}
 					}
-					
+
 					self.extensions[moduleName] = {
 						name: storyData.getAttribute("name"),
 						startnode: storyData.getAttribute("startnode"),
@@ -416,30 +428,32 @@ AFRAME.registerComponent("reach-load-local", {
 						var script = userScripts[i].innerHTML;;
 						try {
 							_.template("<%" + script + "%>")({
-											s: importedStorySpace.state,
-											story: self
-										});
-						
+								s: importedStorySpace.state,
+								story: self
+							});
+
 						} catch (error) {
 							console.log(error);
 						}
 
 					}
-					
+
 					if (window.passage !== undefined && window.passage.container !== undefined) {
-						window.passage.container.emit("reachImportLoaded", {source: importedStorySpace});
+						window.passage.container.emit("reachImportLoaded", {
+							source: importedStorySpace
+						});
 					}
 					console.log(`Imported extension ${importedStorySpace.name} as ${moduleName}.`);
-					
+
 					window.story.finishedImport(uuidKey);
-					
+
 				} else {
 					console.log(`Error loading extension from ${src}.`);
 				}
-				
+
 			};
 			request.send();
-			
+
 
 		}
 
@@ -456,7 +470,7 @@ AFRAME.registerComponent("reach-load-local", {
 				img.setAttribute("id", idTag);
 				img.setAttribute("src", src);
 				img.addEventListener("load", function(evt) {
-					loadedCount = loadedCount + 1;					
+					loadedCount = loadedCount + 1;
 					window.passage.container.emit("reach_imagePreLoaded", {
 						source: {
 							src: evt.target.getAttribute("src"),
@@ -470,13 +484,13 @@ AFRAME.registerComponent("reach-load-local", {
 
 			}
 		}
-		
+
 		for (var i = 0; i < userScripts.length; i++) {
 			var script = userScripts[i].innerHTML;;
 			try {
 				_.template("<%" + script + "%>")({
-								s: window.story.state
-							});
+					s: window.story
+				});
 			} catch (error) {
 				console.log(error);
 			}
@@ -490,13 +504,13 @@ AFRAME.registerComponent("reach-load-local", {
 		if (window.story.isMobile() === true) {
 			window.story.cursor(true);
 		}
-		
+
 		document.addEventListener('keydown', (event) => {
 			// filter for ctrl+alt
 			if (!(event.ctrlKey === true && event.altKey === true)) {
 				return;
 			}
-								
+
 			if (event.code === "KeyD") {
 				if (window.story.hud === undefined) {
 					window.story.lookPosition(true);
@@ -519,7 +533,7 @@ AFRAME.registerComponent("reach-load-local", {
 				}
 			}
 		});
-		
+
 		if (window.story.pendingImports === undefined) {
 			window.story.start();
 		} else {
@@ -528,7 +542,7 @@ AFRAME.registerComponent("reach-load-local", {
 				window.story.doImport(pending.src, pending.moduleName, pending.context, key);
 			}
 		}
-		
+
 
 	}
 });

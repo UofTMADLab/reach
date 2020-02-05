@@ -199,7 +199,7 @@ AFRAME.registerComponent("reach_passage", {
 					var codePassageParams = codePassageLink.options;
 					codePassageParams.twineDirection =  getDirectionBetweenPassages(this.passage.position, codePassageLink.twinePosition) / 360.0 * -12.0;
 					_.template(`<% ${twinePassageData.textContent} %>`)({
-									s: window.story.state,
+									s: twinePassageData.s,
 									p: window.passage,
 						params: codePassageParams
 								});

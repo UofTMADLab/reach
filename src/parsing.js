@@ -60,7 +60,7 @@ function getImagePanelsInPassage(passage) {
 }
 
 function getExternalFunctionsInPassage(passage) {
-	var rexp = /(^|({\s*(.+)\s*})|[^`&])\[\s*([^\[]+)\s*\[(|\s*(.+)\s*)\](\s*\]|((.+))\])/g;
+	var rexp = /(^|({\s*(.+)\s*})|[^`&])\[\s*([\w\d]+)\s*\[(|\s*(.+)\s*)\](\s*\]|((.+))\])/g;
 	var passageText = passage.processedContent;
 	var exts = [];
 	var array1;

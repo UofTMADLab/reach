@@ -2,7 +2,7 @@
 
 const _fs = require('fs');
 const _path = require('path');
-const version = "1.0.55";
+const version = "1.0.60";
 console.log("Making package")
 
 try {
@@ -24,6 +24,8 @@ try {
 	
 
 	_fs.writeFileSync(`./dist/format-${version}-dist.js`, imageAdded, {encoding: 'utf8'});
+	
+	_fs.copyFileSync("./src/lib/reach-extended.html", "./dist/lib/reach-extended.html");
 	
 	console.log("written to ./dist");
 } catch (ex) {

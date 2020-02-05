@@ -222,7 +222,7 @@ Passage.prototype.load = function(passageName, params) {
 		}
 		
 		_.template(`<% ${passage.textContent} %>`)({
-						s: window.story.state,
+						s: passage.s,
 						p: window.passage,
 			params: params
 					});
