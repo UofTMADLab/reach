@@ -7,6 +7,7 @@ import './reach_image_panel.js';
 import './reach_sound.js';
 import './reach_sky.js';
 import './reach_video.js';
+import './reach_custom.js';
 import './arrow.js';
 import {
 	getSrc,
@@ -215,6 +216,19 @@ AFRAME.registerComponent("reach-load-local", {
 				p: window.passage,
 				params: params
 			});
+		}
+		
+		window.story.getText = function(idOrName) {
+			if (idOrName === undefined) {
+				return;
+			}
+			//todo: if this is called from an imported module, it should start looking within that module
+			var passage = window.story.passage(idOrName);
+			if (passage === undefined) {
+				window.story.showError("", "Error: passage was not found: " + idOrName);
+				return;
+			}
+			return passage.textContent;
 		}
 		window.story.show = function(idOrName, hideFromHistory) {
 			var videoElements = document.querySelectorAll("video");

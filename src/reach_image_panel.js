@@ -76,6 +76,7 @@ AFRAME.registerComponent("reach_image_panel", {
 
 	},
 	init: function() {
+		this.el.setAttribute("reach_component", "reach_image_panel");
 		var self = this;
 		this.imageLoadedHandler = function(evt) {
 			if (evt.target !== self.background) {

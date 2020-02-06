@@ -14,7 +14,7 @@ AFRAME.registerComponent("reach_sound", {
 		
 	},
 	init: function() {
-		
+		this.el.setAttribute("reach_component", "reach_sound");
 	},
 	update: function(oldData) {
 		

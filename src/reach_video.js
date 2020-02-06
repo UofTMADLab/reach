@@ -17,7 +17,7 @@ AFRAME.registerComponent("reach_video", {
 		
 	},
 	init: function() {
-		
+		this.el.setAttribute("reach_component", "reach_video");
 	},
 	update: function(oldData) {
 		

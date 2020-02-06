@@ -152,12 +152,12 @@ function getPanelsInPassage(passage) {
   		var newPassage = getPassageByName(array1[5]);
 		newPassage.processedContent = window.story.render(newPassage.getAttribute("pid"));
 		var backgrounds = getBackgroundsInPassage(newPassage);
-        links.push({ text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
+        links.push({link: array1[5], text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
       } else {
   		var newPassage = getPassageByName(array1[6]);
 		newPassage.processedContent = window.story.render(newPassage.getAttribute("pid"));
 		var backgrounds = getBackgroundsInPassage(newPassage);
-        links.push({ text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
+        links.push({link: array1[6], text: getTextInPassage(newPassage).text,  options: options, backgrounds: backgrounds, twinePosition: getPassageTwinePosition(newPassage) });
       }
     }
     return links;

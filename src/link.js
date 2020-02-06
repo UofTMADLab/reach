@@ -90,8 +90,9 @@ function createPassageLink(link, linkIndex, currentPassageTwinePosition) {
 	
 	var mergedOptions = mergeMixins(link.options.mixin, localOptions, defaultOptions);
 	
+	el.setAttribute("reach_passage_name", link.link);
 	el.setAttribute("reach_text_panel", mergedOptions);
-	
+
 
 
 	return el;
@@ -178,7 +179,9 @@ function createPassageText(text, textIndex, currentPassageTwinePosition) {
 	
 	var mergedOptions = mergeMixins(text.options.mixin, localOptions, defaultOptions);
 
+	el.setAttribute("reach_passage_name", text.link);
 	el.setAttribute("reach_text_panel", mergedOptions);
+
 
 	return el;
 }
@@ -263,7 +266,9 @@ function createPassageHTML(text, textIndex, currentPassageTwinePosition) {
 	
 	var mergedOptions = mergeMixins(text.options.mixin, localOptions, defaultOptions);
 
+	el.setAttribute("reach_passage_name", text.link);
 	el.setAttribute("reach_html_panel", mergedOptions);
+
 
 	return el;
 }

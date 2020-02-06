@@ -23,7 +23,7 @@ AFRAME.registerComponent("reach_passage", {
 	//
 	// },
 	init: function() {
-		
+		this.el.setAttribute("reach_component", "reach_passage");
 		if (!this.head) {
 			this.head = document.createElement("a-entity");
 			this.el.appendChild(this.head);
@@ -34,22 +34,24 @@ AFRAME.registerComponent("reach_passage", {
 		
 		var twinePassageData = undefined;
 		if (this.data.id !== REACH_DEFAULT_NULL) {
-			twinePassageData = window.story.passage(this.data.id);
-		} else if (this.data.name !== REACH_DEFAULT_NULL) {
+			this.el.setAttribute("id", this.data.id);
+		}
+		
+		if (this.data.name !== REACH_DEFAULT_NULL) {
 			twinePassageData = window.story.passage(this.data.name);
 		} 
 		
 		if (twinePassageData !== undefined) {
 			this.passage = new Passage(twinePassageData, this.head);			
 		} else {
-			var message = `reach: could not find passage with name or pid: ${this.data.id}`;
-			window.story.showError(message, this.data.id);
+			var message = `reach: could not find passage with name or pid: ${this.data.name}`;
+			window.story.showError(message, this.data.name);
 			return;
 			
 		}
 		
 		if (this.data.hideFromHistory === false) {
-			window.story.history.push(this.passage.id);
+			window.story.history.push(this.passage.name);
 		}
 	
 		if (this.data.attachToWindow === true) {
@@ -65,7 +67,7 @@ AFRAME.registerComponent("reach_passage", {
 		})
 		
 		try {
-		    var processed = window.story.render(this.passage.id, JSON.parse(this.data.params));
+		    var processed = window.story.render(this.passage.name, JSON.parse(this.data.params));
 		} catch (e) {
 			window.story.showError(e, this.passage.name);
 			return;
@@ -119,7 +121,7 @@ AFRAME.registerComponent("reach_passage", {
 		// load custom codes from extension like [myCode[option1]option2]
 		var extFunctions = getExternalFunctionsInPassage(this.passage);
 		for (var i = 0; i < extFunctions.length; i++) {
-			var ext = extFunctions[i];			
+			var ext = extFunctions[i];
 			var extPassagePath = ext.nsPath;
 			var twinePassageData = window.story.passage(extPassagePath, window.story, true);
 			if (twinePassageData !== undefined) {
@@ -130,8 +132,7 @@ AFRAME.registerComponent("reach_passage", {
 					
 					_.template(`<% ${twinePassageData.textContent} %>`)({
 									s: twinePassageData.s,
-									p: window.passage,
-						params: ext
+									p: window.passage, params: ext
 								});
 				} catch (e) {
 					window.story.showError(e, `${this.passage.name} (error in linked code passage named: ${extPassagePath})`)
@@ -226,6 +227,7 @@ AFRAME.registerComponent("reach_passage", {
 			localOptions.attachToWindow = false;
 			localOptions.params = JSON.stringify(mixed.options);
 			try {
+				mixedElement.setAttribute("reach_passage_name", mixed.name);
 				mixedElement.setAttribute("reach_passage", localOptions);				
 			} catch (e) {
 				window.story.showError(e, mixed.name);

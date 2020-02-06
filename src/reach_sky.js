@@ -15,7 +15,7 @@ AFRAME.registerComponent("reach_sky", {
 		
 	},
 	init: function() {
-		
+		this.el.setAttribute("reach_component", "reach_sky");
 	},
 	update: function(oldData) {
 		

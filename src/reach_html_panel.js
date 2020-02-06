@@ -44,25 +44,7 @@ AFRAME.registerComponent("reach_html_panel", {
 		
 	},
 	init: function() {
-		var self = this;
-		// this.imageLoadedHandler = function(evt) {
-		// 	if (evt.target !== self.background) {
-		// 		return;
-		// 	}
-		// 	console.map = evt.target.getObject3D('mesh').material.map;
-		// 	var image = evt.target.getObject3D('mesh').material.map.image;
-		// 	var width = image.naturalWidth;
-		// 	var height = image.naturalHeight;
-		// 	if (width === 0) {
-		// 		return;
-		// 	}
-		// 	var aspect = height / width;
-		// 	var localWidth = self.data.backgroundSize.x;
-		// 	var localHeight = aspect * localWidth;
-		// 	console.log(`image: ${width}, ${height} ${localWidth}, ${localHeight}`);
-		//
-		// 	self.background.setAttribute("geometry", `primitive: ${self.data.backgroundShape}; width: ${localWidth}; height: ${localHeight}`);
-		// }
+		this.el.setAttribute("reach_component", "reach_html_panel");
 	},
 	update: function(oldData) {
 		

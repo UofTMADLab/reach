@@ -107,13 +107,58 @@ Passage.prototype.sound = function(src, options) {
 	return newSound.components.reach_sound;
 }
 
-Passage.prototype.getComponentWithId = function(id, componentType) {
+Passage.prototype.custom = function(name, id, init) {
+	var newElement = document.createElement("a-entity");
+	newElement.setAttribute("reach_custom", {name: name, id: id});
+	newElement.components.reach_custom.initCallback = init;
+	this.deferIfNecessary(function() {
+		this.container.appendChild(newElement);
+	});
+	return;
+}
+
+Passage.prototype.getComponentWithId = function(id, componentType) {	
+	if (componentType === undefined) {
+		//search all component types
+		var el = this.container.querySelector(`#${id}`);
+		if (el === undefined) {
+			return;
+		}
+		var componentType = el.getAttribute("reach_component");
+		return el.components[componentType];
+	}
+	// search only specified component type
 	var el = this.container.querySelector(`[${componentType}]#${id}`);
 	if (el) {
 		return el.components[componentType];
 	} else {
 		return undefined;
 	}
+}
+
+Passage.prototype.getAllComponentsWithId = function(id) {
+	var elements =  this.container.querySelectorAll(`[id="${id}"]`);	
+	var result = [];
+	for (var i = 0; i < elements.length; i++) {
+		var el = elements[i];
+		var componentType = el.getAttribute("reach_component");
+		if (componentType === undefined) {
+			continue;
+		}
+		result.push(el.components[componentType]);
+	}
+	return result;
+}
+
+Passage.prototype.getAllComponentsWithPassageName = function(passageName) {
+	var elements =  this.container.querySelectorAll(`[reach_passage_name="${passageName}"]`);	
+	var result = [];
+	for (var i = 0; i < elements.length; i++) {
+		var el = elements[i];
+		var componentType = el.getAttribute("reach_component");
+		result.push(el.components[componentType]);
+	}
+	return result;
 }
 
 Passage.prototype.getAllComponentsOfType = function(componentType, index) {
@@ -192,6 +237,12 @@ Passage.prototype.videos = function(index) {
 }
 
 Passage.prototype.on = function(eventName, callback, target) {
+	if (eventName === undefined || eventName === "") {
+		return;
+	}
+	if (callback === undefined) {
+		return;
+	}
 	var name = this.name;
 	var self = this;
 	var superCallback = function (e) {
@@ -205,6 +256,10 @@ Passage.prototype.on = function(eventName, callback, target) {
 	}
 	var eventTarget = target === undefined ? this.container : target.eventTargetElement();
 	eventTarget.addEventListener(eventName, superCallback);
+}
+
+Passage.prototype.send = function(eventName, source) {
+	this.container.emit(eventName, {source: source});
 }
 
 // load a %code%, <html>, 'text' or regular passage and mix it into the current one
@@ -224,6 +279,7 @@ Passage.prototype.load = function(passageName, params) {
 		_.template(`<% ${passage.textContent} %>`)({
 						s: passage.s,
 						p: window.passage,
+			reach_passage_name: passageName,
 			params: params
 					});
 					return;
@@ -261,12 +317,33 @@ Passage.prototype.load = function(passageName, params) {
 		localOptions.attachToWindow = false;
 		localOptions.params = JSON.stringify(params);
 		try {
+			mixedElement.setAttribute("reach_passage_name", passageName);
 			mixedElement.setAttribute("reach_passage", localOptions);				
 		} catch (e) {
 			throw `${this.name}(loading passage named: ${passageName})`;		
 		}
 	}
 	
+}
+
+Passage.prototype.unload = function(passageNameOrId) {
+	var unloaded = [];
+	this.applyToAll(passageNameOrId, function(c) {
+		c.el.remove();
+		unloaded.push(c);
+	});
+	this.send("unload", {unloaded: unloaded, name: passageNameOrId});
+}
+
+Passage.prototype.applyToAll = function(passageNameOrId, callback) {
+	if (passageNameOrId === undefined) {
+		return;
+	}
+	var passages = this.getAllComponentsWithPassageName(passageNameOrId).concat(this.getAllComponentsWithId(passageNameOrId));
+	for (var i in passages) {
+		var passage = passages[i];
+		callback(passage);
+	}
 }
 
 // Passage.prototype.fireOnReady = function() {
