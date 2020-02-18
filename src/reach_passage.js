@@ -132,7 +132,7 @@ AFRAME.registerComponent("reach_passage", {
 					
 					_.template(`<% ${twinePassageData.textContent} %>`)({
 									s: twinePassageData.s,
-									p: window.passage, params: ext
+									p: this.passage, params: ext
 								});
 				} catch (e) {
 					window.story.showError(e, `${this.passage.name} (error in linked code passage named: ${extPassagePath})`)

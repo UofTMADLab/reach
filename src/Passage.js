@@ -30,6 +30,13 @@ function Passage(twinePassageData, passageContainer) {
 }
 
 Passage.prototype.destroy = function() {
+
+	if (this.removeCallbacks !== undefined){
+		for (var i in this.removeCallbacks) {
+			console.log(`Removing ${this.name}`);
+			this.removeCallbacks[i](this);
+		}
+	}
 	this.id = undefined;
 	this.name = undefined;
 	this.tags = undefined;
@@ -39,6 +46,14 @@ Passage.prototype.destroy = function() {
 	this.container = undefined;
 	this.onReadyCallback = undefined;
 	this.deferredCallbacks = undefined;
+}
+
+
+Passage.prototype.onRemove = function(callback) {
+		if (this.removeCallbacks === undefined) {
+			this.removeCallbacks = [];
+		}
+		this.removeCallbacks.push(callback);
 }
 
 Passage.prototype.onReady = function(callback) {
@@ -99,6 +114,17 @@ Passage.prototype.video = function(src, options) {
 	var newSky = createVideoSphere({src: src, options:  (options ? options : {})}, this.name);
 	this.deferIfNecessary(function() {this.container.appendChild(newSky);});
 	return newSky.components.reach_video;
+}
+
+Passage.prototype.videoPanel = function(src, options) {
+	var newVideo = document.createElement("a-entity");
+	if (options === undefined) {
+		options = {};
+	}
+	options.src = src;
+	newVideo.setAttribute("reach_video_panel", options);
+	this.deferIfNecessary(function() {this.container.appendChild(newVideo);});
+	return newVideo.components.reach_video_panel;
 }
 
 Passage.prototype.sound = function(src, options) {
@@ -236,6 +262,14 @@ Passage.prototype.videos = function(index) {
 	return this.getAllComponentsOfType("reach_video", index);
 }
 
+Passage.prototype.getVideoPanel = function(id) {
+	return this.getComponentWithId(id, "reach_video_panel");
+}
+
+Passage.prototype.videoPanels = function(index) {
+	return this.getAllComponentsOfType("reach_video_panel", index);
+}
+
 Passage.prototype.on = function(eventName, callback, target) {
 	if (eventName === undefined || eventName === "") {
 		return;
@@ -256,6 +290,9 @@ Passage.prototype.on = function(eventName, callback, target) {
 	}
 	var eventTarget = target === undefined ? this.container : target.eventTargetElement();
 	eventTarget.addEventListener(eventName, superCallback);
+	return function() {
+		eventTarget.removeEventListener(eventName, superCallback);
+	}
 }
 
 Passage.prototype.send = function(eventName, source) {
@@ -327,11 +364,16 @@ Passage.prototype.load = function(passageName, params) {
 }
 
 Passage.prototype.unload = function(passageNameOrId) {
+	if (passageNameOrId === undefined) {
+		this.container.remove();
+		return;
+	}
 	var unloaded = [];
-	this.applyToAll(passageNameOrId, function(c) {
+	this.applyToAll(passageNameOrId, function(c) {		
 		c.el.remove();
 		unloaded.push(c);
 	});
+	
 	this.send("unload", {unloaded: unloaded, name: passageNameOrId});
 }
 

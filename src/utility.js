@@ -100,7 +100,24 @@ function CreateUUID() {
   });
 }
 
+// https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+function hashCode(str) {
+  var hash = 0, i, chr;
+  if (str.length === 0) return hash;
+  for (i = 0; i < str.length; i++) {
+    chr   = str.charCodeAt(i);
+    hash  = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+};
+
+function getVideoId(src) {
+	return `v${hashCode(src)}`;
+}
+
+
 const REACH_DEFAULT_NULL = "reach_default_null_754";
 const REACH_DEFAULT_NULL_NUMBER = -9999;
 
-export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL,REACH_DEFAULT_NULL_NUMBER, mergeMixins, CreateUUID};
+export {getDirectionBetweenPassages, removeAllChildren, getSrc, panelSizeFromCorners, avg, parseCornerString, REACH_DEFAULT_NULL,REACH_DEFAULT_NULL_NUMBER, mergeMixins, CreateUUID, hashCode, getVideoId};
