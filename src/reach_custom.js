@@ -34,6 +34,9 @@ AFRAME.registerComponent("reach_custom", {
 
 	},
 	remove: function() {
+		if (this.removeCallback !== undefined) {
+			this.removeCallback(this);
+		}
 
 	},
 

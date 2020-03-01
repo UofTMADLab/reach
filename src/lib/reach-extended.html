@@ -6,7 +6,10 @@
     <title>reach-extended</title>
   </head>
   <body>
-    <tw-storydata name="reach-extended" startnode="24" creator="Twine" creator-version="2.3.5" ifid="36861234-E4F0-4753-8DC8-A3AE5FCCAF37" zoom="1" format="reach" format-version="1.0.61" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript">console.log("Loaded reach-extended 1.0.1");</script><tw-passagedata pid="1" name="Test" tags="" position="792,188" size="100,100">((#reach-default-360))
+    <tw-storydata name="reach-extended" startnode="26" creator="Twine" creator-version="2.3.5" ifid="36861234-E4F0-4753-8DC8-A3AE5FCCAF37" zoom="1" format="reach" format-version="1.0.61" options="" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css"></style><script role="script" id="twine-user-script" type="text/twine-javascript">window.story.doJSImport("https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js");
+window.story.doJSImport("https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js");
+
+console.log("Loaded reach-extended 1.0.1");</script><tw-passagedata pid="1" name="Test" tags="" position="792,188" size="100,100">((#reach-default-360))
 
 
 [evalSet[&quot;1.2 1.2&quot;]double]
@@ -33,7 +36,7 @@ window.story.import(&quot;http://localhost:8000/lib/reach-extended.html&quot;, &
 
 </tw-passagedata><tw-passagedata pid="3" name="%html%" tags="" position="61,59" size="100,100">p.htmlPanel(params.message);</tw-passagedata><tw-passagedata pid="4" name="&#39;Details&#39;" tags="" position="657,60" size="100,100">You can access the imported functions in your own story with a codes like this:
 
-Use [html[]] to run reach-extended&#39;s %html% object.</tw-passagedata><tw-passagedata pid="5" name="%floor%" tags="" position="179,55" size="100,100">p.custom(&quot;reach_floor&quot;, params.id, (c) =&gt; {
+Use [html[]] to run reach-extended&#39;s %html% object.</tw-passagedata><tw-passagedata pid="5" name="%floor%" tags="" position="179,55" size="100,100">p.custom(&quot;re_floor&quot;, params.id, (c) =&gt; {
   var plane = document.createElement(&quot;a-entity&quot;);
   plane.setAttribute(&quot;geometry&quot;, &quot;primitive:plane&quot;);
   var color = params.parameter1;
@@ -262,9 +265,88 @@ var removeFunc = window.passage.on(eventName, (sender) =&gt; {
 p.onRemove(removeFunc);
 
 
-</tw-passagedata><tw-passagedata pid="24" name="TestVideo" tags="" position="106,361" size="100,100">{&quot;direction&quot;:-2.94, &quot;inclination&quot;: -0.32, &quot;distance&quot;:5, &quot;onClick&quot;: &quot;vidclick&quot;, &quot;width&quot;: 2, &quot;height&quot;: 1.12, &quot;autoplay&quot;:true, &quot;loop&quot;:true}[video[http://localhost:8000/hyperreal/IMG_2627.mp4]vidclick]
+</tw-passagedata><tw-passagedata pid="24" name="TestVideo" tags="" position="66,288" size="100,100">{&quot;direction&quot;:-2.94, &quot;inclination&quot;: -0.32, &quot;distance&quot;:5, &quot;onClick&quot;: &quot;vidclick&quot;, &quot;width&quot;: 2, &quot;height&quot;: 1.12, &quot;autoplay&quot;:true, &quot;loop&quot;:true}[video[http://localhost:8000/hyperreal/IMG_2627.mp4]vidclick]
 
-{&quot;video&quot;:true}((http://localhost:8000/hyperreal/R0010768_er.mp4))</tw-passagedata></tw-storydata>
+</tw-passagedata><tw-passagedata pid="25" name="%environment%" tags="" position="306,68" size="100,100">
+p.custom(&quot;re_environment&quot;, params.id, (c) =&gt; {
+  var options = params;
+  
+  if (options.preset === undefined) {
+  	options.preset = params.parameter1;
+  }
+  c.el.setAttribute(&quot;environment&quot;, options);
+  c.removeCallback = function() {
+  	var scene = document.querySelector(&quot;a-scene&quot;);
+	scene.removeAttribute(&quot;fog&quot;);
+  }
+});
+
+/* 
+Presets include:
+none
+default
+contact
+egypt
+checkerboard
+foreset
+goaland
+yavapai
+goldmine
+arches
+threetowers
+poison
+tron
+japan
+dream
+volcano
+starry
+osiris
+
+*/</tw-passagedata><tw-passagedata pid="26" name="See All Environments" tags="" position="1237,70" size="100,100">
+[[envOcean]]</tw-passagedata><tw-passagedata pid="27" name="envContact" tags="" position="1391,77" size="100,100">[environment[contact]]
+
+[[envEgypt]]
+</tw-passagedata><tw-passagedata pid="28" name="envEgypt" tags="" position="1530,73" size="100,100">[environment[egypt]]
+[[envCheckerboard]] 
+[[envContact]]</tw-passagedata><tw-passagedata pid="29" name="envCheckerboard" tags="" position="1692,84" size="100,100">[environment[checkerboard]]
+[[envEgypt]] 
+[[envForest]]</tw-passagedata><tw-passagedata pid="30" name="envForest" tags="" position="1834,84" size="100,100">[environment[forest]]
+[[envCheckerboard]] 
+[[envGoaland]]</tw-passagedata><tw-passagedata pid="31" name="envGoaland" tags="" position="1824,211" size="100,100">[environment[goaland]]
+[[envForest]] 
+[[envYavapai]]
+</tw-passagedata><tw-passagedata pid="32" name="envYavapai" tags="" position="1689,230" size="100,100">[environment[yavapai]]
+[[envGoaland]] 
+[[envGoldmine]]</tw-passagedata><tw-passagedata pid="33" name="envGoldmine" tags="" position="1560,234" size="100,100">[environment[goldmine]]
+[[envYavapai]] 
+[[envArches]]
+</tw-passagedata><tw-passagedata pid="34" name="envArches" tags="" position="1440,230" size="100,100">[environment[arches]]
+[[envGoldmine]] 
+[[envThreetowers]]</tw-passagedata><tw-passagedata pid="35" name="envThreetowers" tags="" position="1440,378" size="100,100">[environment[threetowers]]
+[[envArches]] 
+[[envPoison]]</tw-passagedata><tw-passagedata pid="36" name="envPoison" tags="" position="1562,377" size="100,100">[environment[poison]]
+[[envThreetowers]] 
+[[envTron]]</tw-passagedata><tw-passagedata pid="37" name="envTron" tags="" position="1695,379" size="100,100">[environment[tron]]
+[[envPoison]] 
+[[envJapan]]</tw-passagedata><tw-passagedata pid="38" name="envJapan" tags="" position="1834,384" size="100,100">[environment[japan]]
+[[envTron]] 
+[[envDream]]</tw-passagedata><tw-passagedata pid="39" name="envDream" tags="" position="1972,387" size="100,100">[environment[dream]]
+[[envJapan]] 
+[[envVolcano]]</tw-passagedata><tw-passagedata pid="40" name="envVolcano" tags="" position="1972,537" size="100,100">[environment[volcano]]
+[[envDream]] 
+[[envStarry]]</tw-passagedata><tw-passagedata pid="41" name="envStarry" tags="" position="1825,519" size="100,100">[environment[starry]]
+[[envVolcano]] 
+[[envOsiris]]</tw-passagedata><tw-passagedata pid="42" name="envOsiris" tags="" position="1684,515" size="100,100">[environment[osiris]]
+[[envStarry]] 
+[[envContact]] </tw-passagedata><tw-passagedata pid="43" name="%ocean%" tags="" position="321,193" size="100,100">
+p.custom(&quot;re_ocean&quot;, params.id, (c) =&gt; {
+  var options = params;
+	var oceanElement = document.createElement(&quot;a-ocean&quot;);
+	c.el.appendChild(oceanElement);
+
+});</tw-passagedata><tw-passagedata pid="44" name="envOcean" tags="" position="1237,220" size="100,100">[ocean[]]
+[[envContact]]
+(())</tw-passagedata></tw-storydata>
     <a-scene device-motion-permission>
       <a-assets><img src="https://cdn.jsdelivr.net/gh/UofTMADLab/reach-dist/reachDefaultRoom.png" id="reach-default-360"/ crossorigin="anonymous"> </a-assets>
 <a-entity id="container"> </a-entity>

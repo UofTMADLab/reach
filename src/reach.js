@@ -364,18 +364,48 @@ AFRAME.registerComponent("reach-load-local", {
 					window.story.pendingImports = {};
 				}
 				var key = CreateUUID();
-				window.story.pendingImports[key] = {
-					src: src,
-					moduleName: moduleName,
-					context: context
+				window.story.pendingImports[key] = function() {
+					window.story.doImport(src, moduleName, context, key);
 				};
-			},
-			window.story.finishedImport = function(uuidKey) {
-				delete window.story.pendingImports[uuidKey];
-				if (Object.keys(window.story.pendingImports).length === 0) {
-					window.story.start();
-				}
+				
+		}
+		window.story.jsImport = function(src) {
+			if (window.story.pendingImports === undefined) {
+				window.story.pendingImports = {};
 			}
+			var key = CreateUUID();
+			window.story.pedingImports[key] = function() {
+				window.story.doJSImport(src, key);
+			}
+		}
+		window.story.finishedImport = function(uuidKey) {
+			delete window.story.pendingImports[uuidKey];
+			if (Object.keys(window.story.pendingImports).length === 0) {
+				window.story.start();
+			}
+		}
+		window.story.doJSImport = function(src, uuidKey) {
+			if (src === undefined) {
+				return;
+			}
+			var request = new XMLHttpRequest;
+			request.open('GET', src);
+			request.responseType = "text";
+			request.onload = function() {
+				if (request.readyState === request.DONE && request.status === 200) {
+					var jsData = request.response;
+					try {
+						eval(jsData);
+						console.log(`Imported script from ${src}`);
+					} catch (error) {
+						console.log(`Error loading from JS source ${src}`);
+						console.log(error)
+					}
+					window.story.finishedImport(uuidKey);
+				}
+			};
+			request.send();
+		}
 		window.story.doImport = function(src, moduleName, context, uuidKey) {
 			if (src === undefined || moduleName === undefined) {
 				return;
@@ -545,7 +575,7 @@ AFRAME.registerComponent("reach-load-local", {
 		} else {
 			for (var key in window.story.pendingImports) {
 				var pending = window.story.pendingImports[key];
-				window.story.doImport(pending.src, pending.moduleName, pending.context, key);
+				pending();
 			}
 		}
 
