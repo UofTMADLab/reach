@@ -10,7 +10,7 @@ AFRAME.registerComponent("reach_sky", {
 		inclination: {type: "number", default: 0.0},
 		transparent: {type: "boolean", default: true},
 		opacity: {type: "number", default: 1.0},
-		src: {type: "string", default: "#reach-default-360"},
+		src: {type: "string", default: REACH_DEFAULT_NULL},
 		onLoaded: {type: "string", default: REACH_DEFAULT_NULL}
 		
 	},
@@ -34,11 +34,11 @@ AFRAME.registerComponent("reach_sky", {
 	
 	
 		if (oldData.src !== this.data.src) {
-			this.sky.setAttribute("src", getSrc(this.data.src));
+			this.sky.setAttribute("src", this.data.src === REACH_DEFAULT_NULL ? window.story.defaultSkySrc : getSrc(this.data.src));
 		}
 		
 	    this.sky.setAttribute("transparent", this.data.transparent);
-	    this.sky.setAttribute("radius", this.data.distance === REACH_DEFAULT_NULL_NUMBER ? window.story.defaultFarClipping - 1 : this.data.distance);
+	    this.sky.setAttribute("radius", this.data.distance === REACH_DEFAULT_NULL_NUMBER ? window.story.defaultFarClipping - 10 : this.data.distance);
 	    this.sky.setAttribute("opacity", this.data.opacity);
 		this.sky.setAttribute("rotation", `${(this.data.inclination) % 12 * 30.0} ${this.data.directionInDegrees === true ? this.data.direction : (this.data.direction % 12) * -30.0} 0`);
 

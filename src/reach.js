@@ -1,4 +1,4 @@
-console.log("REACH-1.0.61,61");
+console.log("REACH-1.0.62,62");
 import './underscore-min.js';
 import './reach_passage.js';
 import './reach_text_panel.js';
@@ -14,7 +14,7 @@ import {
 	getSrc,
 	CreateUUID
 } from './utility.js';
-
+import {getPassageSky} from './sky.js';
 
 var storyDocument;
 var startnode;
@@ -129,6 +129,7 @@ AFRAME.registerComponent("reach-load-local", {
 			currentCursor: undefined,
 			hud: undefined,
 			defaultFarClipping: 1000,
+			defaultSkySrc: "#reach-default-360",
 			extensions: {}
 
 		}
@@ -281,6 +282,8 @@ AFRAME.registerComponent("reach-load-local", {
 		}
 
 		window.story.start = function() {
+			window.story.defaultSky = getPassageSky({options:{"transparent":false, distance: window.story.defaultFarClipping - 1}}).components.reach_sky;
+			document.querySelector("a-scene").appendChild(window.story.defaultSky.el);
 			window.story.show(window.story.startnode);
 		}
 

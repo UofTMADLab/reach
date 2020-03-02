@@ -1,6 +1,6 @@
 import {mergeMixins, getVideoId} from './utility.js';
 
-function createVideoSphere(background, currentPassageName) {
+function createVideoSphere(background) {
 
 	var el = document.createElement("a-entity");
 

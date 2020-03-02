@@ -104,14 +104,14 @@ Passage.prototype.imagePanel = function(img, link, options) {
 }
 
 Passage.prototype.sky = function(img, options) {
-	var newSky = getPassageSky({src: img, options: (options ? options : {})}, this.name);
+	var newSky = getPassageSky({src: img, options: (options ? options : {})});
 	this.deferIfNecessary(function() {this.container.appendChild(newSky);});
 	return newSky.components.reach_sky;
 }
 
 Passage.prototype.video = function(src, options) {
 
-	var newSky = createVideoSphere({src: src, options:  (options ? options : {})}, this.name);
+	var newSky = createVideoSphere({src: src, options:  (options ? options : {})});
 	this.deferIfNecessary(function() {this.container.appendChild(newSky);});
 	return newSky.components.reach_video;
 }

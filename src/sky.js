@@ -1,9 +1,9 @@
 import {mergeMixins} from './utility.js';
 import {createVideoSphere} from './video.js';
 
-function getPassageSky(background, currentPassageName) {
+function getPassageSky(background) {
 	if (background.options.video === true) {
-		return createVideoSphere(background, currentPassageName);
+		return createVideoSphere(background);
 	}
 	
 	var el = document.createElement("a-entity");

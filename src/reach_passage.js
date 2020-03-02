@@ -53,9 +53,13 @@ AFRAME.registerComponent("reach_passage", {
 		if (this.data.hideFromHistory === false) {
 			window.story.history.push(this.passage.name);
 		}
-	
+		
+		// only true for 'root' passage, if sub-passages are referenced this will be false
 		if (this.data.attachToWindow === true) {
 			window.passage = this.passage;
+			// show default sky since it may have been hidden by a previous passage
+			// will be automatically hidden 
+			window.story.defaultSky.show();
 		}
 		
 		// trick to ensure that scripts linked to this passage are run after it is loaded
@@ -76,8 +80,11 @@ AFRAME.registerComponent("reach_passage", {
 	    this.passage.processedContent = processed;
 		
 	    var backgrounds = getBackgroundsInPassage(this.passage);
+		if (backgrounds.length > 0) {
+			window.story.defaultSky.hide();
+		}
 	    for (var i = 0; i < backgrounds.length; i++) {
-	  	  var sky = getPassageSky(backgrounds[i], this.passage.name);
+	  	  var sky = getPassageSky(backgrounds[i]);
 	  	  if (sky !== null) {
 	  	  	scene.appendChild(sky);
 	  	  }
@@ -166,18 +173,18 @@ AFRAME.registerComponent("reach_passage", {
 	      scene.appendChild(soundElement);
 	    }
 		
+		// // load default background if none added
+		// if (this.data.attachToWindow === true) {
+		// 	var backgrounds = this.passage.skies();
+		//     if (backgrounds.length === 0) {
+		//
+		//     	  var defaultSky = getPassageSky({options:{"transparent":false, distance: window.story.defaultFarClipping - 1}});
+		//     	  this.head.appendChild(defaultSky);
+		//     }
+		// }
 
 		
-		if (this.data.attachToWindow === true) {
-			// var allBackgrounds = scene.querySelectorAll("a-sky");
-		    if (backgrounds.length === 0) {
-		    	  // var textBlock = getTextInPassage(passage);
-		    	  // var textElement = createPassageText(textBlock, 0, currentPassageTwinePosition);
-		    	  // scene.appendChild(textElement);
-		    	  var defaultSky = getPassageSky({options:{"transparent":false}}, this.passage.name);
-		    	  scene.appendChild(defaultSky);
-		    }
-		}
+
 
 
 		
@@ -235,6 +242,7 @@ AFRAME.registerComponent("reach_passage", {
 			}
 			
 		}
+
 	},
 	remove: function () {
 		if (this.head) {
