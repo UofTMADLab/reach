@@ -121,9 +121,36 @@ function getSoundsInPassage(passage) {
 }
 
 function getTextInPassage(passage) {
-	var rexp = /({\s*.+\s*})?`?&?(\[\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?/g;
+	var hideText = passage.hasTag("hideText");
+	if (hideText === true) {
+		return {text: "", options:{}};
+	}
 	var passageText = passage.processedContent;
-	return {text: passageText.replace(rexp, ""), options:{direction: 0}};
+	var rexp = /({{\s*.+\s*}})|({\s*.+\s*})?`?&?(\[;?\[\s*.+\s*\]\]|`([^`]+)`|~~\s*.+\s*~~|\(\(\s*.+\s*\)\))\s*\n?|(^|({\s*(.+)\s*})|[^`&])\[\s*([\w\d;]+)\s*\[(|\s*(.+)\s*)\](\s*\]|((.+))\])/g;
+	var optionsRexp = /{{\s*(.+)\s*}}/g;
+	var options = {};
+	var array1;
+	while((array1 = optionsRexp.exec(passageText)) !== null) {
+		console.log(array1);
+		if (array1[1]) {
+			options = JSON.parse(`{${array1[1]}}`);
+		}
+	}
+
+	var isHtml = passage.hasTag("html");
+
+	if (options.direction === undefined) {
+		options.direction = 0;
+	}
+	if (options.html === undefined) {
+		options.html = isHtml;
+	}
+	if (options.hideText === true) {
+		return {text: "", options:{}};
+	} else {
+		return {text: passageText.replace(rexp, ""), options:options};
+	}
+	
 }
 
 function getPanelsInPassage(passage) {

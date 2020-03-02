@@ -79,6 +79,19 @@ Passage.prototype.show = function() {
 	this.container.object3D.visible = true;
 }
 
+Passage.prototype.getTags = function() {
+	var tags = this.passageData.getAttribute("tags");
+	if (tags === null || tags === undefined) {
+		return [];
+	}
+	return tags.split(" ");
+}
+
+Passage.prototype.hasTag = function(tag) {
+	var tags = this.getTags();
+	return tags.indexOf(tag) >= 0;
+}
+
 Passage.prototype.textPanel = function(text, options) {
 	var newPanel = createPassageText({text: text, options: (options ? options : {})}, -1);
 	this.deferIfNecessary(function() {this.container.appendChild(newPanel);});

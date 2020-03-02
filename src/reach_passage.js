@@ -90,6 +90,16 @@ AFRAME.registerComponent("reach_passage", {
 	  	  }
     
 	    }
+		
+		var textInThisPassage = getTextInPassage(this.passage);
+		if (textInThisPassage.text.trim() !== "") {
+			if (textInThisPassage.options.html === true) {
+				this.passage.htmlPanel(textInThisPassage.text, textInThisPassage.options);
+			} else {
+				this.passage.textPanel(textInThisPassage.text, textInThisPassage.options);
+			}
+		}
+
  
 	    var links = getLinksInPassage(this.passage);
 	    for (var i = 0; i < links.length; i++) {
