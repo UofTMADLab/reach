@@ -153,6 +153,7 @@ function getTextInPassage(passage) {
 	
 }
 
+// this will be deprecated
 function getPanelsInPassage(passage) {
 	// var rexp = /({\s*(.+)\s*})?`([^`]+)`/g;
 	//

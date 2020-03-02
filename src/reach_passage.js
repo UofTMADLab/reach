@@ -162,12 +162,13 @@ AFRAME.registerComponent("reach_passage", {
 			 
 		
   
-	    var panels = getPanelsInPassage(this.passage);
-	    for (var i = 0; i < panels.length; i++) {
-	  	  var panel = panels[i];
-	  	  var panelElement = createPassageText(panel, i, this.passage.position);
-	  	  scene.appendChild(panelElement);
-	    }
+  	  	// deprecating old text panel syntax: `[[name]]
+	    // var panels = getPanelsInPassage(this.passage);
+	    // for (var i = 0; i < panels.length; i++) {
+	    // 	  	  var panel = panels[i];
+	    // 	  	  var panelElement = createPassageText(panel, i, this.passage.position);
+	    // 	  	  scene.appendChild(panelElement);
+	    // }
 		
 		var imagePanels = getImagePanelsInPassage(this.passage);
 		for (var i = 0; i < imagePanels.length; i++) {
