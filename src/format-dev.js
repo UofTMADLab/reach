@@ -1,8 +1,8 @@
 window.storyFormat({
 	"author": "Mike Spears, mike.spears@utoronto.ca",
-	"description": "A new story format for VR walkthroughs.",
+	"description": "A new story format for VR walkthroughs -- dev version!!!",
 	"image": "icon.svg",
-	"name": "reach",
+	"name": "reach-dev",
 	"version": "1.0.62",
 	"proofing": false,
 	"license": "MIT",
