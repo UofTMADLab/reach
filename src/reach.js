@@ -83,7 +83,7 @@ AFRAME.registerComponent("reach-load-local", {
 		storyDocument = document;
 		console.log("here");
 		document.querySelector("a-scene").setAttribute("cursor", "rayOrigin: mouse");
-		document.querySelector("a-scene").setAttribute("raycaster", "objects: .clickable");
+		document.querySelector("a-scene").setAttribute("raycaster", {objects: ".clickable"});
 
 
 		window.htmlTextureRendering = document.createElement("div");
@@ -306,10 +306,10 @@ AFRAME.registerComponent("reach-load-local", {
 			if (show === true) {
 				if (window.story.currentCursor === undefined) {
 					var newCursor = document.createElement("a-entity");
-					newCursor.setAttribute("cursor", '');
+					newCursor.setAttribute("cursor", {fuse: false});
 					window.story.currentCursor = newCursor;
-
-					newCursor.setAttribute("raycaster", "objects: .clickable");
+					// newCursor.setAttribute("fuse", "false");
+					newCursor.setAttribute("raycaster", {objects: ".clickable"});
 					newCursor.setAttribute("animation__click", "property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1");
 					newCursor.setAttribute("animation__mouseenter", "property: scale; startEvents: mouseenter; easing: easeInCubic; dur: 100; from: 1 1 1; to: 1.2 1.2 1.2");
 					newCursor.setAttribute("animation__mouseleave", "property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 100; to: 1 1 1");
